@@ -418,7 +418,6 @@ def main(argv):
     # rootgrp = Dataset(argv[1], 'r')
     # dims =rootgrp.dimensions
     reader = Netcdf_Reader()
-    print("--------")
     # dimensions = reader.ndims(dims)
     # reader.get_global_dim_names(dimensions)
     # reader.get_global_dim_length(dimensions)
@@ -451,7 +450,10 @@ def main(argv):
     #------------------------------------------------
 
     #------- domain decoposition & prallel mean caculation-------
-    reader.decompose(1,2,3)
+    size = MPI.COMM_WORLD.Get_size()
+    rank = MPI.COMM_WORLD.Get_rank()
+    name = MPI.Get_processor_name()
+    sys.stdout.write("Helloworld! I am process %d of %d on %s.\n" % (rank, size, name))
 
     
 if __name__ == '__main__':
