@@ -1,8 +1,7 @@
 from mpi4py import MPI
 import sys
 
-comm = MPI.COMM_WORLD()
-psize = comm.Get_size()    # process size
-prank = comm.Get_rank()    # process id
-
-sys.stdout.write("Netcdf! I am process %d of %d.\n" % (prank, psize)) 
+size = MPI.COMM_WORLD.Get_size()
+rank = MPI.COMM_WORLD.Get_rank()
+name = MPI.Get_processor_name()
+sys.stdout.write("Helloworld! I am process %d of %d on %s.\n" % (rank, size, name))
