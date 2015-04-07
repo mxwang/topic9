@@ -446,7 +446,7 @@ def main(argv):
     psize = comm.Get_size()    # process size
     prank = comm.Get_rank()    # process id
 
-    sys.stdout.write("Netcdf! I am process %d of %d on %s.\n" % (rank, size, name))
+    sys.stdout.write("Netcdf! I am process %d of %d.\n" % (prank, psize))
 
     
 if __name__ == '__main__':
