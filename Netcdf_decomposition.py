@@ -406,21 +406,21 @@ class Netcdf_Reader:
             return p_val
                 
 def main(argv):
-    rootgrp = Dataset(argv[1], 'r')
-    dims =rootgrp.dimensions
-    reader = Netcdf_Reader()
-    print("--------")
-    dimensions = reader.ndims(dims)
-    reader.get_global_dim_names(dimensions)
-    reader.get_global_dim_length(dimensions)
-    variables = reader.nvars(rootgrp)
+    # rootgrp = Dataset(argv[1], 'r')
+    # dims =rootgrp.dimensions
+    # reader = Netcdf_Reader()
+    # print("--------")
+    # dimensions = reader.ndims(dims)
+    # reader.get_global_dim_names(dimensions)
+    # reader.get_global_dim_length(dimensions)
+    # variables = reader.nvars(rootgrp)
  
     
-    x = (int)(sys.argv[2])
-    y = (int)(sys.argv[3])
-    z = (int)(sys.argv[4])
-    step_size = (float)(sys.argv[5])
-    num_steps = (int)(sys.argv[6])
+    # x = (int)(sys.argv[2])
+    # y = (int)(sys.argv[3])
+    # z = (int)(sys.argv[4])
+    # step_size = (float)(sys.argv[5])
+    # num_steps = (int)(sys.argv[6])
     
     #-------------2d contour--------------------------
     #var_temp = reader.get_data(variables, var)
