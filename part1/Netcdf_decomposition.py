@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.colors as cols
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
+from struct import *
 from mpi4py import MPI
 
 class Netcdf_Reader:
@@ -406,15 +407,66 @@ class Netcdf_Reader:
             return p_val
 
     #aprun -n num_procs python <program> <data file>  <xpartitions> <ypartitions> <zpartitions>
-    def decompose(self, xpart, ypart, zpart):
+    def decompose(self, xpart, ypart, zpart, xdim, ydim, zdim, data):
+        comm = MPI.COMM_WORLD()
         size = MPI.COMM_WORLD.Get_size()
         rank = MPI.COMM_WORLD.Get_rank()
-        name = MPI.Get_processor_name()
-        sys.stdout.write("Helloworld! I am process %d of %d on %s.\n" % (rank, size, name))
+        sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
 
-       
-                
+        xsub = int(math.ceil(float(xdim)/xpart))
+        ysub = int(math.ceil(float(ydim)/ypart))
+        zsub = int(math.ceil(float(zdim)/zpart))
+                        
+        if (rank == 0):
+            bound = np.zeros((size, 6), dtype = np.int)
+            for rank in xrange(0, pro_size):
+                zidx = rank % zpart
+                yidx = (rank / zpart) % ypart
+                xidx = rank / (ypart * zpart)
+              
+                xmin = xsub * xidx
+                xmax = xsub + xmin
+                if(xmax > xdim):
+                    xmax = xdim
+                ymin = ysub * yidx
+                ymax = ysub + ymin
+                if(ymax > ydim):
+                    ymax = ydim
+                zmin = zsub * zidx
+                zmax = zsub + zmin
+                if(zmax > zdim):
+                    zmax = zdim
+
+                if(xmin == 0):
+                    bound[rank][0] = xmin
+                    bound[rank][3] = xmax
+                else:
+                    bound[rank][0] = xmin + 1
+                    bound[rank][3] = xmax
+                if(ymin == 0):
+                    bound[rank][1] = ymin
+                    bound[rank][4] = ymax
+                else:
+                    bound[rank][1] = ymin + 1
+                    bound[rank][4] = ymax
+                if(zmin == 0):
+                    bound[rank][2] = zmin
+                    bound[rank][5] = zmax
+                else:
+                    bound[rank][2] = zmin + 1
+                    bound[rank][5] = zmax
+        else:
+            bound = None
+        bound = comm.scatter(bound,root = 0)
+        print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", rank, ">"
+
+    
+    
+    
+            
+                        
 def main(argv):
+    
     # rootgrp = Dataset(argv[1], 'r')
     # dims =rootgrp.dimensions
     reader = Netcdf_Reader()
@@ -422,14 +474,7 @@ def main(argv):
     # reader.get_global_dim_names(dimensions)
     # reader.get_global_dim_length(dimensions)
     # variables = reader.nvars(rootgrp)
- 
-    
-    # x = (int)(sys.argv[2])
-    # y = (int)(sys.argv[3])
-    # z = (int)(sys.argv[4])
-    # step_size = (float)(sys.argv[5])
-    # num_steps = (int)(sys.argv[6])
-    
+     
     #-------------2d contour--------------------------
     #var_temp = reader.get_data(variables, var)
     
@@ -450,12 +495,77 @@ def main(argv):
     #------------------------------------------------
 
     #------- domain decoposition & prallel mean caculation-------
-    size = MPI.COMM_WORLD.Get_size()
-    rank = MPI.COMM_WORLD.Get_rank()
-    name = MPI.Get_processor_name()
-    sys.stdout.write("Helloworld! I am process %d of %d on %s.\n" % (rank, size, name))
+    #aprun -n num_procs python <program> <data file>  <xpartitions> <ypartitions> <zpartitions>
+    raw_data = open(sys.argv[1]).read()
+    xpart = (int)(sys.argv[2])
+    ypart = (int)(sys.argv[3])
+    zpart = (int)(sys.argv[4])
 
+    #decoding binary data from file
+    xdim, ydim, zdim = unpack('3i', raw_data[0:12])
+    print xdim, ydim, zdim
+
+    data_size = xdim * ydim * zdim
+    #x, y, z , x+dimX*(y+dimY*z)
+    data = unpack('25000000f', raw_data[12:16 * data_size])
+    data_array = np.asarray(data)
+
+    print "mean: ", np.mean(data_array)
+
+    reader.decompose(xpart, ypart, zpart, xdim, ydim, zdim, data_array)
     
+    #-------round up
+    # xsub = int(math.ceil(float(xdim)/xpart))
+    # ysub = int(math.ceil(float(ydim)/ypart))
+    # zsub = int(math.ceil(float(zdim)/zpart))
+    
+    # pro_size = xpart * ypart * zpart
+    
+    
+    # data = np.zeros((pro_size, 6), dtype = np.int)
+    # for rank in xrange(0, pro_size):
+    #     print "rank: ", rank, "-----"
+    #     zidx = rank % zpart
+    #     yidx = (rank / zpart) % ypart
+    #     xidx = rank / (ypart * zpart)
+    #     print "(", xidx, yidx, zidx, ")"
+    #     xmin = xsub * xidx
+    #     xmax = xsub + xmin
+    #     if(xmax > xdim):
+    #         xmax = xdim
+       
+    #     ymin = ysub * yidx
+    #     ymax = ysub + ymin
+    #     if(ymax > ydim):
+    #         ymax = ydim
+       
+    #     zmin = zsub * zidx
+    #     zmax = zsub + zmin
+    #     if(zmax > zdim):
+    #         zmax = zdim
+       
+    #     if(xmin == 0):
+    #         data[rank][0] = xmin
+    #         data[rank][3] = xmax
+    #     else:
+    #         data[rank][0] = xmin + 1
+    #         data[rank][3] = xmax
+    #     if(ymin == 0):
+    #         data[rank][1] = ymin
+    #         data[rank][4] = ymax
+    #     else:
+    #         data[rank][1] = ymin + 1
+    #         data[rank][4] = ymax
+    #     if(zmin == 0):
+    #         data[rank][2] = zmin
+    #         data[rank][5] = zmax
+    #     else:
+    #         data[rank][2] = zmin + 1
+    #         data[rank][5] = zmax
+    #     print "x:", data[rank][0], data[rank][3]
+    #     print "y:", data[rank][1], data[rank][4]
+    #     print "z:", data[rank][2], data[rank][5]
+       
 if __name__ == '__main__':
     main(sys.argv)
 
