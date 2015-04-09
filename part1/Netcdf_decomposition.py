@@ -410,7 +410,7 @@ class Netcdf_Reader:
     def decompose(self, xpart, ypart, zpart, xdim, ydim, zdim, data):
         size = MPI.COMM_WORLD.Get_size()
         rank = MPI.COMM_WORLD.Get_rank()
-        sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
+        #sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
 
         xsub = int(math.ceil(float(xdim)/xpart))
         ysub = int(math.ceil(float(ydim)/ypart))
@@ -457,7 +457,7 @@ class Netcdf_Reader:
         else:
             bound = None
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
-        print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", rank, ">"
+        print "(", xidx, yidx, zidx,") ","Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", rank, ">"
 
     
     
@@ -502,7 +502,7 @@ def main(argv):
 
     #decoding binary data from file
     xdim, ydim, zdim = unpack('3i', raw_data[0:12])
-    print xdim, ydim, zdim
+    #print xdim, ydim, zdim
 
     data_size = xdim * ydim * zdim
     #x, y, z , x+dimX*(y+dimY*z)
