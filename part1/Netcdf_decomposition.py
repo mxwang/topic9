@@ -418,10 +418,10 @@ class Netcdf_Reader:
                         
         if (rank == 0):
             bound = np.zeros((size, 6), dtype = np.int)
-            for rank in range(size):
-                zidx = (rank) % zpart
-                yidx = ((rank) / zpart) % ypart
-                xidx = (rank) / (ypart * zpart)
+            for rank in xrange(1, size + 1):
+                zidx = (rank -1) % zpart
+                yidx = ((rank -1) / zpart) % ypart
+                xidx = (rank -1) / (ypart * zpart)
               
                 xmin = xsub * xidx
                 xmax = xsub + xmin
@@ -437,23 +437,23 @@ class Netcdf_Reader:
                     zmax = zdim
 
                 if(xmin == 0):
-                    bound[rank][0] = xmin
-                    bound[rank][3] = xmax
+                    bound[rank-1][0] = xmin
+                    bound[rank-1][3] = xmax
                 else:
-                    bound[rank][0] = xmin + 1
-                    bound[rank][3] = xmax
+                    bound[rank-1][0] = xmin + 1
+                    bound[rank-1][3] = xmax
                 if(ymin == 0):
-                    bound[rank][1] = ymin
-                    bound[rank][4] = ymax
+                    bound[rank-1][1] = ymin
+                    bound[rank-1][4] = ymax
                 else:
-                    bound[rank][1] = ymin + 1
-                    bound[rank][4] = ymax
+                    bound[rank-1][1] = ymin + 1
+                    bound[rank-1][4] = ymax
                 if(zmin == 0):
-                    bound[rank][2] = zmin
-                    bound[rank][5] = zmax
+                    bound[rank-1][2] = zmin
+                    bound[rank-1][5] = zmax
                 else:
-                    bound[rank][2] = zmin + 1
-                    bound[rank][5] = zmax
+                    bound[rank-1][2] = zmin + 1
+                    bound[rank-1][5] = zmax
         else:
             bound = None
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
