@@ -418,7 +418,7 @@ class Netcdf_Reader:
                         
         if (rank == 0):
             bound = np.zeros((size, 6), dtype = np.int)
-            for rank in xrange(0, pro_size):
+            for rank in xrange(0, size):
                 zidx = rank % zpart
                 yidx = (rank / zpart) % ypart
                 xidx = rank / (ypart * zpart)
@@ -509,7 +509,7 @@ def main(argv):
     data = unpack('25000000f', raw_data[12:16 * data_size])
     data_array = np.asarray(data)
 
-    print "mean: ", np.mean(data_array)
+    #print "mean: ", np.mean(data_array)
 
     reader.decompose(xpart, ypart, zpart, xdim, ydim, zdim, data_array)
     
