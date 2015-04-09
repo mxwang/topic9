@@ -408,7 +408,6 @@ class Netcdf_Reader:
 
     #aprun -n num_procs python <program> <data file>  <xpartitions> <ypartitions> <zpartitions>
     def decompose(self, xpart, ypart, zpart, xdim, ydim, zdim, data):
-        comm = MPI.COMM_WORLD()
         size = MPI.COMM_WORLD.Get_size()
         rank = MPI.COMM_WORLD.Get_rank()
         sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
@@ -457,7 +456,7 @@ class Netcdf_Reader:
                     bound[rank][5] = zmax
         else:
             bound = None
-        bound = comm.scatter(bound,root = 0)
+        bound = MPI.COMM_WORLD.scatter(bound,root = 0)
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", rank, ">"
 
     
