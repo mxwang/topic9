@@ -418,7 +418,7 @@ class Netcdf_Reader:
                         
         if (rank == 0):
             bound = np.zeros((size, 6), dtype = np.int)
-            for rank in xrange(0, size):
+            for rank in range(size):
                 zidx = (rank) % zpart
                 yidx = ((rank) / zpart) % ypart
                 xidx = (rank) / (ypart * zpart)
