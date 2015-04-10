@@ -429,6 +429,7 @@ class Netcdf_Reader:
             zsub = int(math.ceil(float(zdim)/zpart))
 
             bound = np.zeros((size, 6), dtype = np.int)
+            sliced_data = np.zeros(250000)
             for rank in xrange(1, size + 1):
                 zidx = (rank -1) % zpart
                 yidx = ((rank -1) / zpart) % ypart
@@ -465,37 +466,45 @@ class Netcdf_Reader:
                 else:
                     bound[rank-1][2] = zmin + 1
                     bound[rank-1][5] = zmax
+
+                #x + dimX * (y + dimY * z)
+                # sidx_min = 0 + 500 * (0 + 500 * zidx)
+                # sidx_max = 499 + 500 * (499 + 500 * zidx)
+                # sliced_data = data_array[sidx_min:sidx_max + 1]
+                        
         else:
             bound = None
+            #sliced_data = None
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
+        
         #bound[0],[3] -> x
         #bound[1],[4] -> y
         #boudn[2],[5] -> z
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
-        sliced_data = np.zeros(250000)
         
-        # for zidx in range(zdim):
-        #     if(rank == 0):
-        #         #x + dimX * (y + dimY * z)
-        #         sidx_min = 0 + 500 * (0 + 500 * zidx)
-        #         sidx_max = 499 + 500 * (499 + 500 * zidx)
-        #         sliced_data = data_array[sidx_min:sidx_max + 1]
-        #     else:
-        #         sliced_data = None
+        
+        for zidx in range(zdim):
+            if(rank == 0):
+                #x + dimX * (y + dimY * z)
+                sidx_min = 0 + 500 * (0 + 500 * zidx)
+                sidx_max = 499 + 500 * (499 + 500 * zidx)
+                sliced_data = data_array[sidx_min:sidx_max + 1]
+            else:
+                sliced_data = None
             
-        #     sliced_data = comm.bcast(sliced_data,root = 0)
-        #     temp_buffer = []
-        #     val = 0
-        #     if(zdim > bound[2] and zdim < bound[5]):
-        #         myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
-        #         myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
-        #         for i in xrange(myidx_min, myidx_max + 1):
-        #             temp_buffer.append(sliced_data[i])
-        #             val += sliced_data[i]
-        #     mean = val/(myidx_max - myidx_min + 1)
-        # print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ", mean = ", mean
+            sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
+            temp_buffer = []
+            val = 0
+            if(zdim > bound[2] and zdim < bound[5]):
+                myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
+                myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
+                for i in xrange(myidx_min, myidx_max + 1):
+                    temp_buffer.append(sliced_data[i])
+                    val += sliced_data[i]
+            mean = val/(myidx_max - myidx_min + 1)
+        print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ", mean = ", mean
 
             
     #def ckeck_bound(self, ):
