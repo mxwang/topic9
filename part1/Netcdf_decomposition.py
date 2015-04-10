@@ -467,12 +467,34 @@ class Netcdf_Reader:
         else:
             bound = None
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
+        #bound[0],[3] -> x
+        #bound[1],[4] -> y
+        #boudn[2],[5] -> z
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
-        #broad cast to all other processes
-        #data_array = comm.bcast(data_array,root = 0)
-        
-        
+        #broad cast to all other processes slice by slice along z
+        sliced_data = np.zeros(xdim * ydim)
+        mean_data = []
+        for zidx in range(zdim):
+            if(rank == 0):
+                #x + dimX * (y + dimY * z)
+                sidx_min = 0 + 500 * (0 + 500 * zidx)
+                sidx_max = 499 + 500 * (499 + 500 * zidx)
+                sliced_data = data_array[sidx_min:sidx_max + 1]
+            else:
+                sliced_data = None
+            comm.Barrier()
+            sliced_data = comm.bcast(sliced_data,root = 0)
+            comm.Barrier()
+            if(zdim > bound[2] and zdim < bound[5]):
+                myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
+                myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
+                for i in xrange(myidx_min, myidx_max + 1):
+                    mean_data.append(sliced_data[i])
+        print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ", mean = "
+
+            
+    #def ckeck_bound(self, ):
     
     
             
