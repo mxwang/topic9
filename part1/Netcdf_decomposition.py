@@ -494,6 +494,7 @@ class Netcdf_Reader:
             else:
                 sliced_data = None
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
+            print "root to send zidx:", zidx
 
             
             local_buffer = []
@@ -506,15 +507,15 @@ class Netcdf_Reader:
             #         val += sliced_data[i]
             # mean = val/(myidx_max - myidx_min + 1)
 
-            mean = self.copy_local_data(zdim, bound, sliced_data, local_buffer)
+            self.copy_local_data(zdim, bound, sliced_data, local_buffer)
         print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ", mean = ", mean
 
             
     def copy_local_data(self, zidx, bound, sliced_data, local_buffer):
-        val = 0
-        n = 0
+        #val = 0
+        #n = 0
         print "zidx to receive:", zidx
-        if (zidx > bound[2] and zidx < bound[5]):
+        if (zidx >= bound[2] and zidx =< bound[5]):
             min = bound[0] + 500 * (bound[1] + 500 * zidx)
             max = bound[3] + 500 * (bound[4] + 500 * zidx)
             print "min, max in copy_local", min, max
@@ -524,7 +525,7 @@ class Netcdf_Reader:
                 n += 1
                 print "val, n", val, n
         
-        return val/n
+        #return val/n
     
             
                         
