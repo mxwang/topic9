@@ -423,9 +423,9 @@ class Netcdf_Reader:
 
             #print "mean: ", np.mean(data_array)
 
-            xsub = int(math.ceil(float(xdim)/xpart))
-            ysub = int(math.ceil(float(ydim)/ypart))
-            zsub = int(math.ceil(float(zdim)/zpart))
+            xsub = int(math.trunc(float(xdim)/xpart))
+            ysub = int(math.trunc(float(ydim)/ypart))
+            zsub = int(math.trunc(float(zdim)/zpart))
 
             bound = np.zeros((size, 6), dtype = np.int)
             for rank in xrange(1, size + 1):
