@@ -407,16 +407,26 @@ class Netcdf_Reader:
             return p_val
 
     #aprun -n num_procs python <program> <data file>  <xpartitions> <ypartitions> <zpartitions>
-    def decompose(self, xpart, ypart, zpart, xdim, ydim, zdim, data):
+    def decompose(self, xpart, ypart, zpart, raw_data):
         size = MPI.COMM_WORLD.Get_size()
         rank = MPI.COMM_WORLD.Get_rank()
         #sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
-
-        xsub = int(math.ceil(float(xdim)/xpart))
-        ysub = int(math.ceil(float(ydim)/ypart))
-        zsub = int(math.ceil(float(zdim)/zpart))
                         
         if (rank == 0):
+            xdim, ydim, zdim = unpack('3i', raw_data[0:12])
+            #print xdim, ydim, zdim
+
+            data_size = xdim * ydim * zdim
+            #x, y, z , x+dimX*(y+dimY*z)
+            data = unpack('25000000f', raw_data[12:16 * data_size])
+            data_array = np.asarray(data)
+
+            #print "mean: ", np.mean(data_array)
+
+            xsub = int(math.ceil(float(xdim)/xpart))
+            ysub = int(math.ceil(float(ydim)/ypart))
+            zsub = int(math.ceil(float(zdim)/zpart))
+
             bound = np.zeros((size, 6), dtype = np.int)
             for rank in xrange(1, size + 1):
                 zidx = (rank -1) % zpart
@@ -425,16 +435,16 @@ class Netcdf_Reader:
               
                 xmin = xsub * xidx
                 xmax = xsub + xmin
-                if(xmax > xdim):
-                    xmax = xdim
+                if(xmax > xdim - 1 ):
+                    xmax = xdim -1
                 ymin = ysub * yidx
                 ymax = ysub + ymin
-                if(ymax > ydim):
-                    ymax = ydim
+                if(ymax > ydim - 1):
+                    ymax = ydim -1
                 zmin = zsub * zidx
                 zmax = zsub + zmin
-                if(zmax > zdim):
-                    zmax = zdim
+                if(zmax > zdim - 1):
+                    zmax = zdim -1
 
                 if(xmin == 0):
                     bound[rank-1][0] = xmin
@@ -459,7 +469,10 @@ class Netcdf_Reader:
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
-    
+        #broad cast to all other processes
+        #data_array = comm.bcast(data_array,root = 0)
+        
+        
     
     
             
@@ -500,18 +513,18 @@ def main(argv):
     ypart = (int)(sys.argv[3])
     zpart = (int)(sys.argv[4])
 
-    #decoding binary data from file
-    xdim, ydim, zdim = unpack('3i', raw_data[0:12])
-    #print xdim, ydim, zdim
+    # #decoding binary data from file
+    # xdim, ydim, zdim = unpack('3i', raw_data[0:12])
+    # #print xdim, ydim, zdim
 
-    data_size = xdim * ydim * zdim
-    #x, y, z , x+dimX*(y+dimY*z)
-    data = unpack('25000000f', raw_data[12:16 * data_size])
-    data_array = np.asarray(data)
+    # data_size = xdim * ydim * zdim
+    # #x, y, z , x+dimX*(y+dimY*z)
+    # data = unpack('25000000f', raw_data[12:16 * data_size])
+    # data_array = np.asarray(data)
 
     #print "mean: ", np.mean(data_array)
 
-    reader.decompose(xpart, ypart, zpart, xdim, ydim, zdim, data_array)
+    reader.decompose(xpart, ypart, zpart, raw_data)
     
     #-------round up
     # xsub = int(math.ceil(float(xdim)/xpart))
