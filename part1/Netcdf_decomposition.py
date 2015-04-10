@@ -485,7 +485,7 @@ class Netcdf_Reader:
         #broad cast to all other processes slice by slice along z
         
         
-        for zidx in range(zdim):
+        for zidx in xrange(0, zdim):
             if(rank == 0):
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * zidx)
@@ -517,10 +517,12 @@ class Netcdf_Reader:
         if (zidx > bound[2] and zidx < bound[5]):
             min = bound[0] + 500 * (bound[1] + 500 * zidx)
             max = bound[3] + 500 * (bound[4] + 500 * zidx)
+            print "min, max in copy_local", min, max
             for i in xrange(min, max + 1):
                 temp_buffer.append(sliced_data[i])
                 val += sliced_data[i]
                 n += 1
+                print "val, n", val, n
         
         return val/n
     
