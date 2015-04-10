@@ -417,6 +417,7 @@ class Netcdf_Reader:
             #print xdim, ydim, zdim
 
             data_size = xdim * ydim * zdim
+            xy_size = xdim * ydim
             #x, y, z , x+dimX*(y+dimY*z)
             data = unpack('25000000f', raw_data[12:16 * data_size])
             data_array = np.asarray(data)
@@ -473,7 +474,7 @@ class Netcdf_Reader:
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
-        sliced_data = np.zeros(xdim * ydim)
+        sliced_data = np.zeros(xy_size)
         mean_data = []
         for zidx in range(zdim):
             if(rank == 0):
@@ -483,9 +484,9 @@ class Netcdf_Reader:
                 sliced_data = data_array[sidx_min:sidx_max + 1]
             else:
                 sliced_data = None
-            comm.Barrier()
+            
             sliced_data = comm.bcast(sliced_data,root = 0)
-            comm.Barrier()
+            
             if(zdim > bound[2] and zdim < bound[5]):
                 myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
                 myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
