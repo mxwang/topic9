@@ -493,22 +493,36 @@ class Netcdf_Reader:
                 sliced_data = data_array[sidx_min:sidx_max + 1]
             else:
                 sliced_data = None
-            
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-            temp_buffer = []
-            val = 0
-            if(zdim > bound[2] and zdim < bound[5]):
-                myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
-                myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
-                for i in xrange(myidx_min, myidx_max + 1):
-                    temp_buffer.append(sliced_data[i])
-                    val += sliced_data[i]
-            mean = val/(myidx_max - myidx_min + 1)
+
+            
+            local_buffer = []
+            # val = 0
+            # if(zdim > bound[2] and zdim < bound[5]):
+            #     myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
+            #     myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
+            #     for i in xrange(myidx_min, myidx_max + 1):
+            #         temp_buffer.append(sliced_data[i])
+            #         val += sliced_data[i]
+            # mean = val/(myidx_max - myidx_min + 1)
+
+            mean = self.copy_local_data(zdim, bound, sliced_data, local_buffer)
         print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ", mean = ", mean
 
             
-    #def ckeck_bound(self, ):
-    
+    def copy_local_data(self, zidx, bound, sliced_data, local_buffer):
+        val = 0
+        n = 0
+        print "zidx to receive:", zidx
+        if (zidx > bound[2] and zidx < bound[5]):
+            min = bound[0] + 500 * (bound[1] + 500 * zidx)
+            max = bound[3] + 500 * (bound[4] + 500 * zidx)
+            for i in xrange(min, max + 1):
+                temp_buffer.append(sliced_data[i])
+                val += sliced_data[i]
+                n += 1
+        
+        return val/n
     
             
                         
