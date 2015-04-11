@@ -508,7 +508,7 @@ class Netcdf_Reader:
             # mean = val/(myidx_max - myidx_min + 1)
 
             self.copy_local_data(zdim, bound, sliced_data, local_buffer, rank)
-        print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
+            print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
 
             
     def copy_local_data(self, zidx, bound, sliced_data, local_buffer, rank):
