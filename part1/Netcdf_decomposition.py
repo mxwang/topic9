@@ -413,7 +413,7 @@ class Netcdf_Reader:
         #sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
 
         xdim, ydim, zdim = unpack('3i', raw_data[0:12])
-            #print xdim, ydim, zdim
+            
 
         data_size = xdim * ydim * zdim                
         if (rank == 0):
@@ -466,11 +466,6 @@ class Netcdf_Reader:
                 else:
                     bound[rank-1][2] = zmin + 1
                     bound[rank-1][5] = zmax
-
-                #x + dimX * (y + dimY * z)
-                # sidx_min = 0 + 500 * (0 + 500 * zidx)
-                # sidx_max = 499 + 500 * (499 + 500 * zidx)
-                # sliced_data = data_array[sidx_min:sidx_max + 1]
                         
         else:
             bound = None
@@ -483,10 +478,9 @@ class Netcdf_Reader:
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
-        
-        
+        local_buffer = []
         for zidx in xrange(0, zdim):
-            print "hey zidx in for loop is:", zidx
+            #print "hey zidx in for loop is:", zidx
             if(rank == 0):
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * zidx)
@@ -496,15 +490,7 @@ class Netcdf_Reader:
                 sliced_data = None
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             print "root to send zidx:", zidx
-            local_buffer = []
-            # val = 0
-            # if(zdim > bound[2] and zdim < bound[5]):
-            #     myidx_min = bound[0] + 500 * (bound[1] + 500 * zdim)
-            #     myidx_max = bound[3] + 500 * (bound[4] + 500 * zdim)
-            #     for i in xrange(myidx_min, myidx_max + 1):
-            #         temp_buffer.append(sliced_data[i])
-            #         val += sliced_data[i]
-            # mean = val/(myidx_max - myidx_min + 1)
+           
             self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
             print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
 
