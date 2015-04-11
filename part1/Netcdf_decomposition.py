@@ -429,7 +429,7 @@ class Netcdf_Reader:
             zsub = int(math.ceil(float(zdim)/zpart))
 
             bound = np.zeros((size, 6), dtype = np.int)
-            sliced_data = np.zeros(250000)
+            
             for rank in xrange(1, size + 1):
                 zidx = (rank -1) % zpart
                 yidx = ((rank -1) / zpart) % ypart
@@ -479,6 +479,7 @@ class Netcdf_Reader:
 
         #broad cast to all other processes slice by slice along z
         local_buffer = []
+        sliced_data = np.zeros(250000)
         for zidx in xrange(0, zdim):
             #print "hey zidx in for loop is:", zidx
             if(rank == 0):
