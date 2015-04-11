@@ -479,14 +479,16 @@ class Netcdf_Reader:
 
         #broad cast to all other processes slice by slice along z
         local_buffer = []
-        sliced_data = np.zeros(250000)
+        
         for zidx in xrange(0, zdim):
             #print "hey zidx in for loop is:", zidx
             if(rank == 0):
+                sliced_data = np.zeros(250000)
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * zidx)
                 sidx_max = 499 + 500 * (499 + 500 * zidx)
                 sliced_data = data_array[sidx_min:sidx_max + 1]
+                print "for zidx = ", zidx, "sliced_data:", sliced_data[:]
             else:
                 sliced_data = None
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
