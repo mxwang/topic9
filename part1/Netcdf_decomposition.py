@@ -483,6 +483,7 @@ class Netcdf_Reader:
         for zidx in xrange(0, zdim):
             #print "hey zidx in for loop is:", zidx
             if(rank == 0):
+                print "hello I am rank 0, about to send data"
                 sliced_data = np.zeros(250000)
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * zidx)
