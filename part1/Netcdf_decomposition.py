@@ -520,7 +520,7 @@ class Netcdf_Reader:
             max = bound[3] + 500 * (bound[4] + 500 * zidx)
             print "min, max in copy_local", min, max
             for i in xrange(min, max + 1):
-                temp_buffer.append(sliced_data[i])
+                local_buffer.append(sliced_data[i])
                 val += sliced_data[i]
                 n += 1
                 print "val, n", val, n
