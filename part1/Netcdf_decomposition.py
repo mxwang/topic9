@@ -486,6 +486,7 @@ class Netcdf_Reader:
         
         
         for zidx in xrange(0, zdim):
+            print "hey zidx in for loop is:", zidx
             if(rank == 0):
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * zidx)
@@ -495,8 +496,6 @@ class Netcdf_Reader:
                 sliced_data = None
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             print "root to send zidx:", zidx
-
-            
             local_buffer = []
             # val = 0
             # if(zdim > bound[2] and zdim < bound[5]):
@@ -506,8 +505,7 @@ class Netcdf_Reader:
             #         temp_buffer.append(sliced_data[i])
             #         val += sliced_data[i]
             # mean = val/(myidx_max - myidx_min + 1)
-
-            self.copy_local_data(zdim, bound, sliced_data, local_buffer, rank)
+            self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
             print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
 
             
@@ -515,7 +513,7 @@ class Netcdf_Reader:
         #val = 0
         #n = 0
         print "process <", rank, ">", "zidx to receive:", zidx
-        print "I am about to enter the boundary between (", bound[2],bound[5], ")" 
+        print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")" 
         if (zidx >= bound[2] and zidx <= bound[5]):
             print "I am in the boundary between (", bound[2],bound[5], ")" 
             min = bound[0] + 500 * (bound[1] + 500 * zidx)
