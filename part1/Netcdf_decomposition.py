@@ -410,7 +410,7 @@ class Netcdf_Reader:
     def decompose(self, xpart, ypart, zpart, raw_data):
         size = MPI.COMM_WORLD.Get_size()
         rank = MPI.COMM_WORLD.Get_rank()
-        #sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
+        sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
 
         xdim, ydim, zdim = unpack('3i', raw_data[0:12])
             
@@ -430,10 +430,11 @@ class Netcdf_Reader:
 
             bound = np.zeros((size-1, 6), dtype = np.int)
             
-            for rank in xrange(1, size):
-                zidx = (rank -1) % zpart
-                yidx = ((rank -1) / zpart) % ypart
-                xidx = (rank -1) / (ypart * zpart)
+            for ridx in xrange(1, size):
+                print "ridx:", ridx
+                zidx = (ridx -1) % zpart
+                yidx = ((ridx -1) / zpart) % ypart
+                xidx = (ridx -1) / (ypart * zpart)
               
                 xmin = xsub * xidx
                 xmax = xsub + xmin
@@ -449,23 +450,23 @@ class Netcdf_Reader:
                     zmax = zdim -1
 
                 if(xmin == 0):
-                    bound[rank][0] = xmin
-                    bound[rank][3] = xmax
+                    bound[ridx][0] = xmin
+                    bound[ridx][3] = xmax
                 else:
-                    bound[rank][0] = xmin + 1
-                    bound[rank][3] = xmax
+                    bound[ridx][0] = xmin + 1
+                    bound[ridx][3] = xmax
                 if(ymin == 0):
-                    bound[rank][1] = ymin
-                    bound[rank][4] = ymax
+                    bound[ridx][1] = ymin
+                    bound[ridx][4] = ymax
                 else:
-                    bound[rank][1] = ymin + 1
-                    bound[rank][4] = ymax
+                    bound[ridx][1] = ymin + 1
+                    bound[ridx][4] = ymax
                 if(zmin == 0):
-                    bound[rank][2] = zmin
-                    bound[rank][5] = zmax
+                    bound[ridx][2] = zmin
+                    bound[ridx][5] = zmax
                 else:
-                    bound[rank][2] = zmin + 1
-                    bound[rank][5] = zmax
+                    bound[ridx][2] = zmin + 1
+                    bound[ridx][5] = zmax
                         
         else:
             bound = None
