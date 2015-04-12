@@ -432,7 +432,7 @@ class Netcdf_Reader:
             #print bound.shape()
             
             for ridx in xrange(0, size):
-                print "ridx:", ridx
+                
                 zidx = (ridx) % zpart
                 yidx = ((ridx) / zpart) % ypart
                 xidx = (ridx) / (ypart * zpart)
@@ -485,7 +485,7 @@ class Netcdf_Reader:
         for i in xrange(0, zdim):
             #print "hey zidx in for loop is:", zidx
             if(rank == 0):
-                print "hello I am rank 0, about to send data"
+                
                 sliced_data = np.zeros(250000)
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * zidx)
