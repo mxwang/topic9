@@ -428,9 +428,9 @@ class Netcdf_Reader:
             ysub = int(math.ceil(float(ydim)/ypart))
             zsub = int(math.ceil(float(zdim)/zpart))
 
-            bound = np.zeros((size, 6), dtype = np.int)
+            bound = np.zeros((size-1, 6), dtype = np.int)
             
-            for rank in xrange(1, size + 1):
+            for rank in xrange(1, size):
                 zidx = (rank -1) % zpart
                 yidx = ((rank -1) / zpart) % ypart
                 xidx = (rank -1) / (ypart * zpart)
@@ -449,23 +449,23 @@ class Netcdf_Reader:
                     zmax = zdim -1
 
                 if(xmin == 0):
-                    bound[rank-1][0] = xmin
-                    bound[rank-1][3] = xmax
+                    bound[rank][0] = xmin
+                    bound[rank][3] = xmax
                 else:
-                    bound[rank-1][0] = xmin + 1
-                    bound[rank-1][3] = xmax
+                    bound[rank][0] = xmin + 1
+                    bound[rank][3] = xmax
                 if(ymin == 0):
-                    bound[rank-1][1] = ymin
-                    bound[rank-1][4] = ymax
+                    bound[rank][1] = ymin
+                    bound[rank][4] = ymax
                 else:
-                    bound[rank-1][1] = ymin + 1
-                    bound[rank-1][4] = ymax
+                    bound[rank][1] = ymin + 1
+                    bound[rank][4] = ymax
                 if(zmin == 0):
-                    bound[rank-1][2] = zmin
-                    bound[rank-1][5] = zmax
+                    bound[rank][2] = zmin
+                    bound[rank][5] = zmax
                 else:
-                    bound[rank-1][2] = zmin + 1
-                    bound[rank-1][5] = zmax
+                    bound[rank][2] = zmin + 1
+                    bound[rank][5] = zmax
                         
         else:
             bound = None
@@ -480,29 +480,30 @@ class Netcdf_Reader:
         #broad cast to all other processes slice by slice along z
         local_buffer = []
         
-        for zidx in xrange(0, zdim):
-            #print "hey zidx in for loop is:", zidx
-            if(rank == 0):
-                print "hello I am rank 0, about to send data"
-                sliced_data = np.zeros(250000)
-                #x + dimX * (y + dimY * z)
-                sidx_min = 0 + 500 * (0 + 500 * zidx)
-                sidx_max = 499 + 500 * (499 + 500 * zidx)
-                sliced_data = data_array[sidx_min:sidx_max + 1]
-                print "for zidx = ", zidx, "sliced_data:", sliced_data[:]
-            else:
-                sliced_data = None
-            MPI.COMM_WORLD.Barrier()
-            sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-            #print "root to send zidx:", zidx
-            MPI.COMM_WORLD.Barrier()
-            self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
-            print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
+        # for zidx in xrange(0, zdim):
+        #     #print "hey zidx in for loop is:", zidx
+        #     if(rank == 0):
+        #         print "hello I am rank 0, about to send data"
+        #         sliced_data = np.zeros(250000)
+        #         #x + dimX * (y + dimY * z)
+        #         sidx_min = 0 + 500 * (0 + 500 * zidx)
+        #         sidx_max = 499 + 500 * (499 + 500 * zidx)
+        #         sliced_data = data_array[sidx_min:sidx_max + 1]
+        #         print "for zidx = ", zidx, "sliced_data:", sliced_data[:]
+        #     else:
+        #         sliced_data = None
+                
+        #     MPI.COMM_WORLD.Barrier()
+        #     sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
+        #     #print "root to send zidx:", zidx
+        #     MPI.COMM_WORLD.Barrier()
+        #     self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
+        #     print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
 
             
     def copy_local_data(self, zidx, bound, sliced_data, local_buffer, rank):
-        #val = 0
-        #n = 0
+        val = 0
+        n = 0
         #print "process <", rank, ">", "zidx to receive:", zidx
         # print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")" 
         if (zidx >= bound[2] and zidx <= bound[5]):
