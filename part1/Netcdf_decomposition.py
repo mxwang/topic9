@@ -410,7 +410,7 @@ class Netcdf_Reader:
     def decompose(self, xpart, ypart, zpart, raw_data):
         size = MPI.COMM_WORLD.Get_size()
         rank = MPI.COMM_WORLD.Get_rank()
-        sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
+        #sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
 
         xdim, ydim, zdim = unpack('3i', raw_data[0:12])
             
@@ -468,7 +468,7 @@ class Netcdf_Reader:
                 else:
                     bound[ridx][2] = zmin + 1
                     bound[ridx][5] = zmax
-            print "bound[ridx]:", ridx, bound[ridx][:]
+            #print "bound[ridx]:", ridx, bound[ridx][:]
         else:
             bound = None
             #sliced_data = None
@@ -482,25 +482,25 @@ class Netcdf_Reader:
         #broad cast to all other processes slice by slice along z
         local_buffer = []
         
-        # for zidx in xrange(0, zdim):
-        #     #print "hey zidx in for loop is:", zidx
-        #     if(rank == 0):
-        #         print "hello I am rank 0, about to send data"
-        #         sliced_data = np.zeros(250000)
-        #         #x + dimX * (y + dimY * z)
-        #         sidx_min = 0 + 500 * (0 + 500 * zidx)
-        #         sidx_max = 499 + 500 * (499 + 500 * zidx)
-        #         sliced_data = data_array[sidx_min:sidx_max + 1]
-        #         print "for zidx = ", zidx, "sliced_data:", sliced_data[:]
-        #     else:
-        #         sliced_data = None
+        for i in xrange(0, zdim):
+            #print "hey zidx in for loop is:", zidx
+            if(rank == 0):
+                print "hello I am rank 0, about to send data"
+                sliced_data = np.zeros(250000)
+                #x + dimX * (y + dimY * z)
+                sidx_min = 0 + 500 * (0 + 500 * zidx)
+                sidx_max = 499 + 500 * (499 + 500 * zidx)
+                sliced_data = data_array[sidx_min:sidx_max + 1]
+                print "for zidx = ", zidx, "sliced_data:", sliced_data[:]
+            else:
+                sliced_data = None
                 
-        #     MPI.COMM_WORLD.Barrier()
-        #     sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-        #     #print "root to send zidx:", zidx
-        #     MPI.COMM_WORLD.Barrier()
-        #     self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
-        #     print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
+            # MPI.COMM_WORLD.Barrier()
+            # sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
+            # #print "root to send zidx:", zidx
+            # MPI.COMM_WORLD.Barrier()
+            # self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
+            # print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
 
             
     def copy_local_data(self, zidx, bound, sliced_data, local_buffer, rank):
