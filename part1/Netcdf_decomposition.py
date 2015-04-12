@@ -505,11 +505,11 @@ class Netcdf_Reader:
 
             
     def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
-        val = 0
-        n = 0
         #print "process <", rank, ">", "zidx to receive:", zidx
         print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")" 
         if (z >= bound[2] and z <= bound[5]):
+            val = 0
+            n = 0
             print "I am in the boundary between (", bound[2],bound[5], ")" 
             min = bound[0] + 500 * (bound[1] + 500 * z)
             max = bound[3] + 500 * (bound[4] + 500 * z)
@@ -520,7 +520,7 @@ class Netcdf_Reader:
                 n += 1
                 #print "val, n", val, n
         
-        return val/n
+            return val/n
     
             
                         
