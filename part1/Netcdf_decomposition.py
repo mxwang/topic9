@@ -491,28 +491,28 @@ class Netcdf_Reader:
                 sidx_min = 0 + 500 * (0 + 500 * i)
                 sidx_max = 499 + 500 * (499 + 500 * i)
                 sliced_data = data_array[sidx_min:sidx_max]
-                print "for zidx = ", i, "sliced_data: [sidx_min]", sidx_min, "[sidx_max]", sidx_max
-                print sliced_data
+                #print "for zidx = ", i, "sliced_data: [sidx_min]", sidx_min, "[sidx_max]", sidx_max
+                #print sliced_data
             else:
                 sliced_data = None
                 
-            # MPI.COMM_WORLD.Barrier()
-            # sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-            # #print "root to send zidx:", zidx
-            # MPI.COMM_WORLD.Barrier()
-            # self.copy_local_data(zidx, bound, sliced_data, local_buffer, rank)
-            # print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", 
+            MPI.COMM_WORLD.Barrier()
+            sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
+            #print "root to send zidx:", zidx
+            MPI.COMM_WORLD.Barrier()
+            mean = self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
+            print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", mean
 
             
-    def copy_local_data(self, zidx, bound, sliced_data, local_buffer, rank):
+    def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
         val = 0
         n = 0
         #print "process <", rank, ">", "zidx to receive:", zidx
-        # print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")" 
-        if (zidx >= bound[2] and zidx <= bound[5]):
+        print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")" 
+        if (z >= bound[2] and z <= bound[5]):
             #print "I am in the boundary between (", bound[2],bound[5], ")" 
-            min = bound[0] + 500 * (bound[1] + 500 * zidx)
-            max = bound[3] + 500 * (bound[4] + 500 * zidx)
+            min = bound[0] + 500 * (bound[1] + 500 * z)
+            max = bound[3] + 500 * (bound[4] + 500 * z)
             #print "min, max in copy_local", min, max
             for i in xrange(min, max + 1):
                 local_buffer.append(sliced_data[i])
@@ -520,7 +520,7 @@ class Netcdf_Reader:
                 n += 1
                 print "val, n", val, n
         
-        #return val/n
+        return val/n
     
             
                         
