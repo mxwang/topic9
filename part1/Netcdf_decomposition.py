@@ -429,7 +429,7 @@ class Netcdf_Reader:
             zsub = int(math.ceil(float(zdim)/zpart))
 
             bound = np.zeros((size-1, 6), dtype = np.int)
-            print bound.shape()
+            #print bound.shape()
             
             for ridx in xrange(1, size):
                 print "ridx:", ridx
