@@ -428,14 +428,14 @@ class Netcdf_Reader:
             ysub = int(math.ceil(float(ydim)/ypart))
             zsub = int(math.ceil(float(zdim)/zpart))
 
-            bound = np.zeros((size-1, 6), dtype = np.int)
+            bound = np.zeros((size, 6), dtype = np.int)
             #print bound.shape()
             
-            for ridx in xrange(1, size):
+            for ridx in xrange(0, size):
                 print "ridx:", ridx
-                zidx = (ridx -1) % zpart
-                yidx = ((ridx -1) / zpart) % ypart
-                xidx = (ridx -1) / (ypart * zpart)
+                zidx = (ridx) % zpart
+                yidx = ((ridx) / zpart) % ypart
+                xidx = (ridx) / (ypart * zpart)
               
                 xmin = xsub * xidx
                 xmax = xsub + xmin
@@ -451,24 +451,24 @@ class Netcdf_Reader:
                     zmax = zdim -1
 
                 if(xmin == 0):
-                    bound[ridx-1][0] = xmin
-                    bound[ridx-1][3] = xmax
+                    bound[ridx][0] = xmin
+                    bound[ridx][3] = xmax
                 else:
-                    bound[ridx-1][0] = xmin + 1
-                    bound[ridx-1][3] = xmax
+                    bound[ridx][0] = xmin + 1
+                    bound[ridx][3] = xmax
                 if(ymin == 0):
-                    bound[ridx-1][1] = ymin
-                    bound[ridx-1][4] = ymax
+                    bound[ridx][1] = ymin
+                    bound[ridx][4] = ymax
                 else:
-                    bound[ridx-1][1] = ymin + 1
-                    bound[ridx-1][4] = ymax
+                    bound[ridx][1] = ymin + 1
+                    bound[ridx][4] = ymax
                 if(zmin == 0):
-                    bound[ridx-1][2] = zmin
-                    bound[ridx-1][5] = zmax
+                    bound[ridx][2] = zmin
+                    bound[ridx][5] = zmax
                 else:
-                    bound[ridx-1][2] = zmin + 1
-                    bound[ridx-1][5] = zmax
-            print "bound:", bound
+                    bound[ridx][2] = zmin + 1
+                    bound[ridx][5] = zmax
+            print "bound[ridx]:", ridx, bound[ridx][:]
         else:
             bound = None
             #sliced_data = None
