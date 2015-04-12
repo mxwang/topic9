@@ -488,8 +488,8 @@ class Netcdf_Reader:
                 
                 sliced_data = np.zeros(250000)
                 #x + dimX * (y + dimY * z)
-                sidx_min = 0 + 500 * (0 + 500 * zidx)
-                sidx_max = 499 + 500 * (499 + 500 * zidx)
+                sidx_min = 0 + 500 * (0 + 500 * i)
+                sidx_max = 499 + 500 * (499 + 500 * i)
                 sliced_data = data_array[sidx_min:sidx_max + 1]
                 print "for zidx = ", i, "sliced_data: [sidx_min]", sidx_min, "[sidx_max]", sidx_max + 1
             else:
