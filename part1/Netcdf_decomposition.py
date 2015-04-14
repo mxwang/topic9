@@ -502,7 +502,7 @@ class Netcdf_Reader:
             #MPI.COMM_WORLD.Barrier()
             self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
             #print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = "
-        print "Process", rank, "local buffer:", local_buffer
+            print "Process", rank, "local buffer:", local_buffer
 
             
     def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
@@ -516,6 +516,7 @@ class Netcdf_Reader:
             # max = bound[3] + 500 * (bound[4] + 500 * z)
             min = bound[1] * 500 + bound[0]
             max = bound[4] * 500 + bound[3]
+            print "sliced_data min ~ max+1", slice_data[min:max +1]
             local_buffer = np.append(local_buffer, sliced_data[min: max+1])
                 
 
