@@ -481,7 +481,7 @@ class Netcdf_Reader:
 
         #broad cast to all other processes slice by slice along z
         local_buffer = []
-        
+        mean = 0
         for i in xrange(0, zdim):
             #print "hey zidx in for loop is:", i
             if(rank == 0):
@@ -496,31 +496,29 @@ class Netcdf_Reader:
             else:
                 sliced_data = None
                 
-            MPI.COMM_WORLD.Barrier()
+            #MPI.COMM_WORLD.Barrier()
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             #print "root to send zidx:", zidx
-            MPI.COMM_WORLD.Barrier()
-            mean = self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
-            print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = ", mean
+            #MPI.COMM_WORLD.Barrier()
+            self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
+            print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = "
 
             
     def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
         #print "process <", rank, ">", "zidx to receive:", zidx
-        print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")" 
+        #print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")"
         if (z >= bound[2] and z <= bound[5]):
-            val = 0
-            n = 0
+            
             print "I am in the boundary between (", bound[2],bound[5], ")" 
             min = bound[0] + 500 * (bound[1] + 500 * z)
             max = bound[3] + 500 * (bound[4] + 500 * z)
             #print "min, max in copy_local", min, max
             for i in xrange(min, max + 1):
                 local_buffer.append(sliced_data[i])
-                val += sliced_data[i]
-                n += 1
-                #print "val, n", val, n
-        
-            return val/n
+                
+
+
+
     
             
                         
