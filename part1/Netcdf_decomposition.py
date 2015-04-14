@@ -516,8 +516,8 @@ class Netcdf_Reader:
             # max = bound[3] + 500 * (bound[4] + 500 * z)
             min = bound[1] * 500 + bound[0]
             max = bound[4] * 500 + bound[3]
-            print "sliced_data min ~ max+1", slice_data[min:max +1]
-            local_buffer = np.append(local_buffer, sliced_data[min: max+1])
+            print "sliced_data min ~ max+1", sliced_data[min:max]
+            local_buffer = np.append(local_buffer, sliced_data[min: max])
                 
 
 
