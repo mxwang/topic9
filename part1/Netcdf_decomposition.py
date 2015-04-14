@@ -480,7 +480,7 @@ class Netcdf_Reader:
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
-        local_buffer = []
+        local_buffer = np.empty(shape = (0), dtype = np.int)
         mean = 0
         for i in xrange(0, zdim):
             #print "hey zidx in for loop is:", i
@@ -502,10 +502,11 @@ class Netcdf_Reader:
             #MPI.COMM_WORLD.Barrier()
             self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
             #print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = "
+        print "Process", rank, "local buffer:", local_buffer
 
             
     def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
-        print "process <", rank, ">", "zidx to receive:", z
+        #print "process <", rank, ">", "zidx to receive:", z
         #print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")"
         if (z >= bound[2] and z <= bound[5]):
             
@@ -515,8 +516,7 @@ class Netcdf_Reader:
             # max = bound[3] + 500 * (bound[4] + 500 * z)
             min = bound[1] * 500 + bound[0]
             max = bound[4] * 500 + bound[3]
-            for i in xrange(min, max):
-                local_buffer.append(sliced_data[i])
+            local_buffer = np.append(local_buffer, sliced_data[min: max+1])
                 
 
 
