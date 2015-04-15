@@ -503,7 +503,8 @@ class Netcdf_Reader:
             #temp_buffer= self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
             temp_buffer= self.copy_local_data(i, bound, sliced_data, rank)
             if(rank == 1):
-                print "copy to return:", temp_buffer
+                print "----------------"
+                print "copy to return:", temp_buffer, temp_buffer.size
             local_buffer = np.append(local_buffer, temp_buffer)
             if(rank == 1):
                 print "append to local_buffer:", local_buffer, "size:", local_buffer.size
