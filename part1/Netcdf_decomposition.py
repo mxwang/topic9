@@ -496,16 +496,18 @@ class Netcdf_Reader:
             else:
                 sliced_data = None
                 
-            #MPI.COMM_WORLD.Barrier()
+
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             #print "root to send zidx:", zidx
-            #MPI.COMM_WORLD.Barrier()
+            
             #temp_buffer= self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
             if(rank == 1):
-                print "local_buffer before append:", local_buffer, local_buffer.size
+                print "local_buffer BEFORE append:", local_buffer, local_buffer.size
+            MPI.COMM_WORLD.Barrier()
             self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
+            MPI.COMM_WORLD.Barrier()
             if(rank == 1):
-                print "local_buffer after append:", local_buffer, "size:", local_buffer.size            
+                print "local_buffer AFTER append:", local_buffer, "size:", local_buffer.size            
             #print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = "
         if(rank == 1):
             print "Process", rank, "local buffer:", local_buffer, local_buffer.size
