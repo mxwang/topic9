@@ -529,6 +529,7 @@ class Netcdf_Reader:
                 print  "index in min ~ max",min, "~", max, "data:", sliced_data[min:max], sliced_data.size
             #local_buffer = np.append(local_buffer, sliced_data[min: max])
             local_buffer = np.append(local_buffer, sliced_data[min:max])
+            print "Inside: ", local_buffer, "size:", local_buffer.size 
                 
 
 
