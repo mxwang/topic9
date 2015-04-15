@@ -500,12 +500,14 @@ class Netcdf_Reader:
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             #print "root to send zidx:", zidx
             #MPI.COMM_WORLD.Barrier()
-            self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
+             #temp_buffer= self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
+             temp_buffer= self.copy_local_data(i, bound, sliced_data, rank)
+             local_buffer = np.append(local_buffer, temp_buffer)
             #print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = "
         print "Process", rank, "local buffer:", local_buffer
 
             
-    def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
+    def copy_local_data(self, z, bound, sliced_data, rank):
         #print "process <", rank, ">", "zidx to receive:", z
         #print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")"
         if (z >= bound[2] and z <= bound[5]):
@@ -516,8 +518,9 @@ class Netcdf_Reader:
             # max = bound[3] + 500 * (bound[4] + 500 * z)
             min = bound[1] * 500 + bound[0]
             max = bound[4] * 500 + bound[3]
-            print "sliced_data min ~ max", sliced_data[min:max]
-            local_buffer = np.append(local_buffer, sliced_data[min: max])
+            print "rank", rank, "sliced_data min ~ max", sliced_data[min:max]
+            #local_buffer = np.append(local_buffer, sliced_data[min: max])
+            return sliced_data[min: max]
                 
 
 
