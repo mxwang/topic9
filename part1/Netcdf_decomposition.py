@@ -480,7 +480,9 @@ class Netcdf_Reader:
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
+        printf "1)hello~ local-buffer called"
         local_buffer = np.empty(shape = (0), dtype = np.int)
+        printf "2)hello~ local-buffer called"
         mean = 0
         for i in xrange(0, zdim):
             #print "hey zidx in for loop is:", i
