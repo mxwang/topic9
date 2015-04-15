@@ -485,7 +485,7 @@ class Netcdf_Reader:
         print "2)hello~ local-buffer called"
         mean = 0
         for i in xrange(0, zdim):
-            #print "hey zidx in for loop is:", i
+            print "hey zidx in for loop is:", i
             if(rank == 0):
                 
                 sliced_data = np.zeros(250000)
