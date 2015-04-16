@@ -514,10 +514,10 @@ class Netcdf_Reader:
             
     def copy_local_data(self, z, bound, sliced_data, rank):
         
-        if (z >= bound[2] and z <= bound[5]):
+        #if (z >= bound[2] and z <= bound[5]):
             
-            min = bound[1] * 500 + bound[0]
-            max = bound[4] * 500 + bound[3]
+        min = bound[1] * 500 + bound[0]
+        max = bound[4] * 500 + bound[3]
             
             #local_buffer = np.append(local_buffer, sliced_data[min: max])
 
@@ -526,7 +526,7 @@ class Netcdf_Reader:
             #local_buffer = local_buffer + sliced_data[min:max]
             
             #print "z", z,  "orig:", sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size",sliced_data[min:max].size 
-            return sliced_data[min:max]
+        return sliced_data[min:max]
         
             
 
