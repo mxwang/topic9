@@ -481,18 +481,20 @@ class Netcdf_Reader:
 
         #broad cast to all other processes slice by slice along z
         print "1)hello~ local-buffer called"
-        local_buffer = np.empty(shape = (0), dtype = np.int)
+        #local_buffer = np.empty(shape = (0), dtype = np.int)
+        local_buffer = []
         print "2)hello~ local-buffer called"
         mean = 0
         for i in xrange(0, zdim):
             print "hey zidx in for loop is:", i
             if(rank == 0):
                 
-                sliced_data = np.zeros(250000)
+                #sliced_data = np.zeros(250000)
+                sliced_data = []
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * i)
                 sidx_max = 499 + 500 * (499 + 500 * i)
-                sliced_data = data_array[sidx_min:sidx_max]
+                sliced_data += data_array[sidx_min:sidx_max]
                 #print "for zidx = ", i, "sliced_data: [sidx_min]", sidx_min, "[sidx_max]", sidx_max
                 #print sliced_data
             else:
@@ -530,7 +532,7 @@ class Netcdf_Reader:
             #     print "rank", rank, "z to broadcast:", z, "z boundary:", bound[2], "~",bound[5]
             #     print  "index in min ~ max",min, "~", max, "data:", sliced_data[min:max], sliced_data.size
             #local_buffer = np.append(local_buffer, sliced_data[min: max])
-            np.append(local_buffer, sliced_data[min:max])
+            local_buffer += sliced_data[min:max]
             #print "z", z, "Inside: ", local_buffer, "size:", local_buffer.size 
                 
 
