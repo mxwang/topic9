@@ -502,7 +502,8 @@ class Netcdf_Reader:
                     print "rank", rank, "z", i, "local_buffer AFTER:", local_buffer, "size", local_buffer.size 
             #MPI.COMM_WORLD.Barrier()
             #self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
-            local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
+            if(i >= bound[2] and i <= bound[5]):
+                local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
             if(rank == 1):
                     print "rank", rank, "z", i, "local_buffer AFTER:", local_buffer, "size", local_buffer.size 
             #MPI.COMM_WORLD.Barrier()
@@ -526,8 +527,7 @@ class Netcdf_Reader:
             
             #print "z", z,  "orig:", sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size",sliced_data[min:max].size 
             return sliced_data[min:max]
-        else:
-            return 0
+        
             
 
             
