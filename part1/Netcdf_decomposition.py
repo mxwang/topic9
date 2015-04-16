@@ -492,8 +492,8 @@ class Netcdf_Reader:
                 sidx_min = 0 + 500 * (0 + 500 * i)
                 sidx_max = 499 + 500 * (499 + 500 * i)
                 sliced_data = data_array[sidx_min:sidx_max]
-                if(rank == 1):
-                    print "rank", rank, "z", i, "data", sliced_data, "len", len(sliced_data)
+                
+                print "rank", rank, "z", i, "data", sliced_data, "len", len(sliced_data)
             else:
                 sliced_data = None
        
