@@ -480,8 +480,8 @@ class Netcdf_Reader:
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
-              
-        local_buffer = []
+        local_buffer = np.empty(shape = (0), dtype = np.int)
+        #local_buffer = numpy.zeros())
         for i in xrange(0, zdim):
             
             if(rank == 0):
@@ -508,6 +508,7 @@ class Netcdf_Reader:
     
             
     def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
+        global local_buffer
         if (z >= bound[2] and z <= bound[5]):
             
             min = bound[1] * 500 + bound[0]
@@ -515,7 +516,7 @@ class Netcdf_Reader:
             
             #local_buffer = np.append(local_buffer, sliced_data[min: max])
 
-            #np.append(local_buffer, sliced_data[min:max])
+            #local_buffer = np.append(local_buffer, sliced_data[min:max])
 
             local_buffe += sliced_data[min:max]
             
