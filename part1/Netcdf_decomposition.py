@@ -530,8 +530,13 @@ class Netcdf_Reader:
             #     print "rank", rank, "z to broadcast:", z, "z boundary:", bound[2], "~",bound[5]
             #     print  "index in min ~ max",min, "~", max, "data:", sliced_data[min:max], sliced_data.size
             #local_buffer = np.append(local_buffer, sliced_data[min: max])
-            np.append(local_buffer, sliced_data[min:max])
-            #print "z", z, "Inside: ", local_buffer, "size:", local_buffer.size 
+            #np.append(local_buffer, sliced_data[min:max])
+
+            local_buffe += sliced_data[min:max]
+            
+            # print "z", z, "Inside: ", "orig:" sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size"sliced_data[min:max].size 
+            # return sliced_data[min:max]
+            
                 
 
 
