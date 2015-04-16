@@ -521,7 +521,7 @@ class Netcdf_Reader:
 
             #local_buffer = local_buffer + sliced_data[min:max]
             
-            print "z", z, "Inside: ", "orig:" sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size"sliced_data[min:max].size 
+            print "z", z,  "orig:", sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size",sliced_data[min:max].size 
             return sliced_data[min:max]
             
 
