@@ -429,7 +429,7 @@ class Netcdf_Reader:
             zsub = int(math.ceil(float(zdim)/zpart))
 
             bound = np.zeros((size, 6), dtype = np.int)
-            #print bound.shape()
+           
             
             for ridx in xrange(0, size):
                 
@@ -468,7 +468,7 @@ class Netcdf_Reader:
                 else:
                     bound[ridx][2] = zmin + 1
                     bound[ridx][5] = zmax
-            #print "bound[ridx]:", ridx, bound[ridx][:]
+           
         else:
             bound = None
             #sliced_data = None
@@ -480,56 +480,41 @@ class Netcdf_Reader:
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         #broad cast to all other processes slice by slice along z
-        print "1)hello~ local-buffer called"
-        local_buffer = np.empty(shape = (0), dtype = np.int)
-        print "2)hello~ local-buffer called"
-        mean = 0
+              
+        local_buffer = []
         for i in xrange(0, zdim):
-            print "hey zidx in for loop is:", i
+            
             if(rank == 0):
                 
-                sliced_data = np.zeros(250000)
+                #sliced_data = np.zeros(250000)
+                sliced_data = []
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * i)
                 sidx_max = 499 + 500 * (499 + 500 * i)
                 sliced_data = data_array[sidx_min:sidx_max]
-                #print "for zidx = ", i, "sliced_data: [sidx_min]", sidx_min, "[sidx_max]", sidx_max
-                #print sliced_data
+                if(rank == 1):
+                    print "rank", rank, "z", z, "data", sliced_data, "len", len(sliced_data)
             else:
                 sliced_data = None
-                
-
+       
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-            #print "root to send zidx:", zidx
             
-            #temp_buffer= self.copy_local_data(i, bound, sliced_data, local_buffer, rank)
-            # if(rank == 1):
-            #     print "local_buffer BEFORE append:", local_buffer, local_buffer.size
             MPI.COMM_WORLD.Barrier()
             self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
             MPI.COMM_WORLD.Barrier()
-            # if(rank == 1):
-            #     print "local_buffer AFTER append:", local_buffer, "size:", local_buffer.size            
-            #print "Process <", rank, "> has data < ",bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5], ">, mean = "
+            
         if(rank == 1):
             print "Process", rank, "local buffer:", local_buffer, local_buffer.size
     
             
     def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
-        #print "process <", rank, ">", "zidx to receive:", z
-        #print "I am process", rank, "about to enter the boundary between (", bound[2],bound[5], ")"
         if (z >= bound[2] and z <= bound[5]):
             
-            #print "I am in the boundary between (", bound[2],bound[5], ")"
-            #y * width + x
-            # min = bound[0] + 500 * (bound[1] + 500 * z)
-            # max = bound[3] + 500 * (bound[4] + 500 * z)
             min = bound[1] * 500 + bound[0]
             max = bound[4] * 500 + bound[3]
-            # if(rank == 1):
-            #     print "rank", rank, "z to broadcast:", z, "z boundary:", bound[2], "~",bound[5]
-            #     print  "index in min ~ max",min, "~", max, "data:", sliced_data[min:max], sliced_data.size
+            
             #local_buffer = np.append(local_buffer, sliced_data[min: max])
+
             #np.append(local_buffer, sliced_data[min:max])
 
             local_buffe += sliced_data[min:max]
@@ -537,6 +522,11 @@ class Netcdf_Reader:
             # print "z", z, "Inside: ", "orig:" sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size"sliced_data[min:max].size 
             # return sliced_data[min:max]
             
+
+            
+            
+            
+
                 
 
 
