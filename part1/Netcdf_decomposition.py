@@ -487,16 +487,17 @@ class Netcdf_Reader:
             if(rank == 0):
                 
                 sliced_data = np.zeros(250000)
-                #sliced_data = []
+                
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * i)
                 sidx_max = 499 + 500 * (499 + 500 * i)
                 sliced_data = data_array[sidx_min:sidx_max]
                 
-                print "rank", rank, "z", i, "data", sliced_data, "len", len(sliced_data)
             else:
                 sliced_data = None
-       
+
+            if(rank == 1):
+                    print "rank", rank, "z", i, "data", sliced_data, "len", len(sliced_data)
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             
             #MPI.COMM_WORLD.Barrier()
