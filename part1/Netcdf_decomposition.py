@@ -478,10 +478,10 @@ class Netcdf_Reader:
         #bound[1],[4] -> y
         #boudn[2],[5] -> z
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
-
+        
         #broad cast to all other processes slice by slice along z
         local_buffer = np.empty(shape = (0), dtype = np.int)
-       
+        print "--------------"
         for i in xrange(0, zdim):
             
             if(rank == 0):
