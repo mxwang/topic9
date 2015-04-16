@@ -486,8 +486,8 @@ class Netcdf_Reader:
             
             if(rank == 0):
                 
-                #sliced_data = np.zeros(250000)
-                sliced_data = []
+                sliced_data = np.zeros(250000)
+                #sliced_data = []
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + 500 * (0 + 500 * i)
                 sidx_max = 499 + 500 * (499 + 500 * i)
@@ -499,16 +499,17 @@ class Netcdf_Reader:
        
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             
-            MPI.COMM_WORLD.Barrier()
-            self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
-            MPI.COMM_WORLD.Barrier()
+            #MPI.COMM_WORLD.Barrier()
+            #self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
+            local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
+            #MPI.COMM_WORLD.Barrier()
             
-        if(rank == 1):
-            print "Process", rank, "local buffer:", local_buffer, local_buffer.size
+            if(rank == 1):
+                print "Process", rank, "z", i, "local buffer:", local_buffer, local_buffer.size
     
             
-    def copy_local_data(self, z, bound, sliced_data, local_buffer, rank):
-        global local_buffer
+    def copy_local_data(self, z, bound, sliced_data, rank):
+        
         if (z >= bound[2] and z <= bound[5]):
             
             min = bound[1] * 500 + bound[0]
@@ -518,10 +519,10 @@ class Netcdf_Reader:
 
             #local_buffer = np.append(local_buffer, sliced_data[min:max])
 
-            local_buffer = local_buffer + sliced_data[min:max]
+            #local_buffer = local_buffer + sliced_data[min:max]
             
-            # print "z", z, "Inside: ", "orig:" sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size"sliced_data[min:max].size 
-            # return sliced_data[min:max]
+            print "z", z, "Inside: ", "orig:" sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size"sliced_data[min:max].size 
+            return sliced_data[min:max]
             
 
             
