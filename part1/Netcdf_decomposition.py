@@ -471,7 +471,7 @@ class Netcdf_Reader:
            
         else:
             bound = None
-            #sliced_data = None
+           
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
         
         #bound[0],[3] -> x
@@ -481,7 +481,7 @@ class Netcdf_Reader:
 
         #broad cast to all other processes slice by slice along z
         local_buffer = np.empty(shape = (0), dtype = np.int)
-        #local_buffer = numpy.zeros())
+       
         for i in xrange(0, zdim):
             
             if(rank == 0):
@@ -496,36 +496,21 @@ class Netcdf_Reader:
             else:
                 sliced_data = None
 
-            
+            #broadcasting.....
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-            if(rank == 1):
-                    print "rank", rank, "z", i, "local_buffer AFTER:", local_buffer, "size", local_buffer.size 
-            #MPI.COMM_WORLD.Barrier()
-            #self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
+                      
             if(i >= bound[2] and i <= bound[5]):
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
-            if(rank == 1):
-                    print "rank", rank, "z", i, "local_buffer AFTER:", local_buffer, "size", local_buffer.size 
-            #MPI.COMM_WORLD.Barrier()
-            
+                        
         if(rank == 1):
             print "Process:", rank, "z:", i, "local buffer:", local_buffer, local_buffer.size
     
             
     def copy_local_data(self, z, bound, sliced_data, rank):
-        
-        #if (z >= bound[2] and z <= bound[5]):
             
         min = bound[1] * 500 + bound[0]
         max = bound[4] * 500 + bound[3]
-            
-            #local_buffer = np.append(local_buffer, sliced_data[min: max])
 
-            #local_buffer = np.append(local_buffer, sliced_data[min:max])
-
-            #local_buffer = local_buffer + sliced_data[min:max]
-            
-            #print "z", z,  "orig:", sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size",sliced_data[min:max].size 
         return sliced_data[min:max]
         
             
