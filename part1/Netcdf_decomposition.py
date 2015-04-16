@@ -496,10 +496,10 @@ class Netcdf_Reader:
             else:
                 sliced_data = None
 
+            
+            sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             if(rank == 1):
                     print "rank", rank, "z", i, "data", sliced_data, "len", len(sliced_data)
-            sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
-            
             #MPI.COMM_WORLD.Barrier()
             #self.copy_local_data(i, bound, sliced_data,local_buffer, rank)
             local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
