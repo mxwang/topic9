@@ -526,6 +526,8 @@ class Netcdf_Reader:
             
             #print "z", z,  "orig:", sliced_data, "orig size:", sliced_data.size, "current:", sliced_data[min:max], "curr size",sliced_data[min:max].size 
             return sliced_data[min:max]
+        else:
+            return 0
             
 
             
