@@ -493,7 +493,7 @@ class Netcdf_Reader:
                 sidx_max = 499 + 500 * (499 + 500 * i)
                 sliced_data = data_array[sidx_min:sidx_max]
                 if(rank == 1):
-                    print "rank", rank, "z", z, "data", sliced_data, "len", len(sliced_data)
+                    print "rank", rank, "z", i, "data", sliced_data, "len", len(sliced_data)
             else:
                 sliced_data = None
        
@@ -505,7 +505,7 @@ class Netcdf_Reader:
             #MPI.COMM_WORLD.Barrier()
             
         if(rank == 1):
-            print "Process", rank, "z", i, "local buffer:", local_buffer, local_buffer.size
+            print "Process:", rank, "z:", i, "local buffer:", local_buffer, local_buffer.size
     
             
     def copy_local_data(self, z, bound, sliced_data, rank):
