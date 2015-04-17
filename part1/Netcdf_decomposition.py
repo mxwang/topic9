@@ -516,9 +516,10 @@ class Netcdf_Reader:
         if(rank == 0):
             mean_all = np.zeros(size)
             print "mean all before:", mean_all
-            MPI.COMM_WORLD.Barrier()
-            print "mean val:", mean_val
-            mean_all = MPI.COMM_WORLD.gather(np.mean(local_buffer),root = 0)
+        MPI.COMM_WORLD.Barrier()
+        print "mean val:", mean_val
+        mean_all = MPI.COMM_WORLD.gather(np.mean(local_buffer),root = 0)
+        if(root == 0):
             print "mean_all after", mean_all
             
     def copy_local_data(self, z, bound, sliced_data, rank):
