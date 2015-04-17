@@ -432,7 +432,7 @@ class Netcdf_Reader:
         data_size = xdim * ydim * zdim
 
         if(rank == 0):
-            data_array = np.arange(27)
+            data_array = np.arange(99)
             print data_array, data_array.size
 
         #------------------------
