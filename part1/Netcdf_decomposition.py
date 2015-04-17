@@ -423,9 +423,7 @@ class Netcdf_Reader:
             data_array = np.asarray(data)
             #data_array = data_array[:300]
 
-            print "sum of data_array:", np.sum(data_array), "mean", np.sum(data_array)/data_array.size
-
-            print "mean from data_array: ", np.mean(data_array), "data_array size:", data_array.size
+            #print "mean from data_array: ", np.mean(data_array), "data_array size:", data_array.size
 
             xsub = int(math.ceil(float(xdim)/xpart))
             ysub = int(math.ceil(float(ydim)/ypart))
@@ -510,11 +508,11 @@ class Netcdf_Reader:
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             MPI.COMM_WORLD.Barrier()
             if(i >= bound[2] and i <= bound[5] and rank != 0):
-                if(rank == 1):
-                    print "rank 1, zidx:", i 
+                # if(rank == 1):
+                #     print "rank 1, zidx:", i 
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank,xdim))
-                if(i == zdim -1):
-                    print "rank", rank, "local_buffer size", local_buffer.size
+                # if(i == zdim -1):
+                #     print "rank", rank, "local_buffer size", local_buffer.size
         
         total = np.zeros(size)
         
