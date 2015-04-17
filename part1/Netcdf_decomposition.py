@@ -472,8 +472,8 @@ class Netcdf_Reader:
         else:
             bound = None
             
-        for i in xrange(0, 6):
-            bound[0][i] = 0
+        
+            
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
         
         #bound[0],[3] -> x
