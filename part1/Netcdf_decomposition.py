@@ -422,6 +422,8 @@ class Netcdf_Reader:
             data = unpack('25000000f', raw_data[12:16 * data_size])
             data_array = np.asarray(data)
 
+            print "sum of data_array:", np.sum(data_array), "mean", np.sum(data_array)/data_array.size
+
             print "mean from data_array: ", np.mean(data_array), "data_array size:", data_array.size
 
             xsub = int(math.ceil(float(xdim)/xpart))
@@ -526,7 +528,7 @@ class Netcdf_Reader:
         
         if rank == 0:
             mean = np.sum(total)/(size -1)
-            print "total size", len(total), "rank size", size
+            #print "total size", len(total), "rank size", size
             print "Process", rank, "receives local means <", total[1:], "> and the overall mean = <", mean, ">", 
             
 
