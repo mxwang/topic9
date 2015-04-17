@@ -513,6 +513,8 @@ class Netcdf_Reader:
             mean_val = np.mean(local_buffer)
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  mean_val, ">"
 
+        if(rank == 0):
+            mean_val = 0
         #gather all the mean from other processes
                     
        
