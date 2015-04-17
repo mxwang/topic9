@@ -528,7 +528,8 @@ class Netcdf_Reader:
         
         if rank == 0:
             mean = np.sum(total)/(size -1)
-            print "Process", rank, "receives local means <", total, "> and the overall mean = <", mean, ">", 
+            print "total size", len(total), "rank size", size
+            print "Process", rank, "receives local means <", total[1:], "> and the overall mean = <", mean, ">", 
             #print "sum", np.sum(total), "mean / size -1", np.sum(total)/(size -1)
 
             
