@@ -514,17 +514,11 @@ class Netcdf_Reader:
             integral[0] = np.mean(local_buffer)
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral[0], ">"
 
+        #reduce node receives results with a collective "reduce"
+        MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
 
-
-        #gather all the mean from other processes
-                    
-       
-            
-        # print "rank", rank, "mean val:", mean_val
-        # MPI.COMM_WORLD.Reduce(mean_val, total, op = MPI.SUM, root = 0)
-
-        
-        # print "after reduce:", total
+        if rank == 0:
+            print "after reduce:", total
             
     def copy_local_data(self, z, bound, sliced_data, rank):
             
