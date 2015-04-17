@@ -508,22 +508,23 @@ class Netcdf_Reader:
             if(i >= bound[2] and i <= bound[5] and i != 0):
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
         total = np.zeros(1)
+        integral = np.zeros(1)
          
         if(rank != 0):
-            mean_val = np.mean(local_buffer)
-            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  mean_val, ">"
+            integral[0] = np.mean(local_buffer)
+            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral, ">"
 
-        if(rank == 0):
-            mean_val = 0
+
+
         #gather all the mean from other processes
                     
        
             
-        print "rank", rank, "mean val:", mean_val
-        MPI.COMM_WORLD.Reduce(mean_val, total, op = MPI.SUM, root = 0)
+        # print "rank", rank, "mean val:", mean_val
+        # MPI.COMM_WORLD.Reduce(mean_val, total, op = MPI.SUM, root = 0)
 
         
-        print "after reduce:", total
+        # print "after reduce:", total
             
     def copy_local_data(self, z, bound, sliced_data, rank):
             
