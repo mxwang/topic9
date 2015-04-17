@@ -422,7 +422,7 @@ class Netcdf_Reader:
             data = unpack('25000000f', raw_data[12:16 * data_size])
             data_array = np.asarray(data)
 
-            print "mean from data_array: ", np.mean(data_array)
+            print "mean from data_array: ", np.mean(data_array), "data_array size:", data_array.size
 
             xsub = int(math.ceil(float(xdim)/xpart))
             ysub = int(math.ceil(float(ydim)/ypart))
