@@ -509,11 +509,12 @@ class Netcdf_Reader:
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
         #total = np.zeros(1)
         total = np.zeros(size)
-        integral = np.zeros(1)
+        #integral = np.zeros(1)
          
         if(rank != 0):
-            integral[0] = np.mean(local_buffer)
-            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral[0], ">"
+            #integral[0] = np.mean(local_buffer)
+            integral = np.mean(local_buffer)
+            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral, ">"
 
         #reduce node receives results with a collective "reduce"
         #MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
