@@ -422,7 +422,7 @@ class Netcdf_Reader:
             data = unpack('25000000f', raw_data[12:16 * data_size])
             data_array = np.asarray(data)
 
-            #print "mean: ", np.mean(data_array)
+            print "mean from data_array: ", np.mean(data_array)
 
             xsub = int(math.ceil(float(xdim)/xpart))
             ysub = int(math.ceil(float(ydim)/ypart))
@@ -507,7 +507,8 @@ class Netcdf_Reader:
                       
             if(i >= bound[2] and i <= bound[5] and i != 0):
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
-        total = np.zeros(1)
+        #total = np.zeros(1)
+        total = np.zeros(size)
         integral = np.zeros(1)
          
         if(rank != 0):
@@ -515,10 +516,14 @@ class Netcdf_Reader:
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral[0], ">"
 
         #reduce node receives results with a collective "reduce"
-        MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
+        #MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
 
+        #gathering
+        total = MPI.COMM_WORLD.gather(integral, root = 0)
+        
         if rank == 0:
-            print "after reduce:", total
+            print "Process:", rank, "receives local means" , total
+            #Process 0 receives local means <mean 1>  <mean 2> .... <mean n>  and the overall mean = <mean> 
             
     def copy_local_data(self, z, bound, sliced_data, rank):
             
