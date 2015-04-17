@@ -514,7 +514,7 @@ class Netcdf_Reader:
 
             #gather all the mean from other processes
         
-            total = numpy.zeros(1)
+            total = np.zeros(1)
             
             MPI.COMM_WORLD.Barrier()
             
