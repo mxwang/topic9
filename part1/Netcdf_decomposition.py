@@ -508,7 +508,7 @@ class Netcdf_Reader:
             MPI.COMM_WORLD.Barrier()
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
             MPI.COMM_WORLD.Barrier()
-            if(i >= bound[2] and i <= bound[5] and i != 0):
+            if(i >= bound[2] and i <= bound[5] and rank != 0):
                 if(rank == 1):
                     print "rank 1, zidx:", i 
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank,xdim))
