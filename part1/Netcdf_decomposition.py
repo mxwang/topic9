@@ -468,6 +468,8 @@ class Netcdf_Reader:
                 else:
                     bound[ridx][2] = zmin + 1
                     bound[ridx][5] = zmax
+
+                print "rank", ridx, "boundary:", bound[ridx][:]
            
         else:
             bound = None
