@@ -523,7 +523,7 @@ class Netcdf_Reader:
         total = MPI.COMM_WORLD.gather(integral, root = 0)
         
         if rank == 0:
-            print "Process", rank, "receives local means <", total[:], "> and the overall mean = <", np.mean(total), ">" 
+            print "Process", rank, "receives local means <", total[:][0], "> and the overall mean = <", np.mean(total), ">" 
 
             
     def copy_local_data(self, z, bound, sliced_data, rank):
