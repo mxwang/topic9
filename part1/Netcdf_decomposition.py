@@ -513,10 +513,12 @@ class Netcdf_Reader:
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  mean_val, ">"
 
         #gather all the mean from other processes
-        mean_all = []
+        mean_all = np.zeros(size)
+        print "mean all before:", mean_all
         MPI.COMM_WORLD.Barrier()
-        mean_all = MPI.COMM_WORLD.gather(mean_val,root = 0)
-        print mean_all
+        print "mean val:", mean_val
+        mean_all = MPI.COMM_WORLD.gather(np.mean(local_buffer),root = 0)
+        print "mean_all after", mean_all
             
     def copy_local_data(self, z, bound, sliced_data, rank):
             
