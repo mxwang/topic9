@@ -520,7 +520,7 @@ class Netcdf_Reader:
         #MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
 
         #gathering
-        if rank == 0
+        if rank == 0:
             total = MPI.COMM_WORLD.gather(0, root = 0)
         else
             total = MPI.COMM_WORLD.gather(np.mean(local_buffer), root = 0)
