@@ -515,7 +515,7 @@ class Netcdf_Reader:
 
         #gather all the mean from other processes
                     
-        MPI.COMM_WORLD.Barrier()
+       
             
         print "rank", rank, "mean val:", mean_val
         MPI.COMM_WORLD.Reduce(mean_val, total, op = MPI.SUM, root = 0)
