@@ -513,8 +513,9 @@ class Netcdf_Reader:
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  mean_val, ">"
 
         #gather all the mean from other processes
-        mean_all = np.zeros(size)
-        print "mean all before:", mean_all
+        if(rank == 0)
+            mean_all = np.zeros(size)
+            print "mean all before:", mean_all
         MPI.COMM_WORLD.Barrier()
         print "mean val:", mean_val
         mean_all = MPI.COMM_WORLD.gather(np.mean(local_buffer),root = 0)
