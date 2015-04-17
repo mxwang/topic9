@@ -509,7 +509,8 @@ class Netcdf_Reader:
                       
             if(i >= bound[2] and i <= bound[5] and i != 0):
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank,xdim))
-                print "rank", rank, "local_buffer size", local_buffer.size
+                if(i == zdim -1):
+                    print "rank", rank, "local_buffer size", local_buffer.size
         
         total = np.zeros(size)
         
