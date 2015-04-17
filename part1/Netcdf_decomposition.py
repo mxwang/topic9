@@ -512,7 +512,7 @@ class Netcdf_Reader:
          
         if(rank != 0):
             integral[0] = np.mean(local_buffer)
-            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral, ">"
+            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral[0], ">"
 
 
 
