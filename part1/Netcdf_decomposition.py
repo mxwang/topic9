@@ -505,9 +505,9 @@ class Netcdf_Reader:
             #broadcasting.....
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
                       
-            if(i >= bound[2] and i <= bound[5]):
+            if(i >= bound[2] and i <= bound[5] and i != 0):
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
-                        
+        
         print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  np.mean(local_buffer), ">"
             
             
