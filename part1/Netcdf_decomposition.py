@@ -538,7 +538,7 @@ class Netcdf_Reader:
         #x + dimX * y
         #bound[0],[3] -> x
         #bound[1],[4] -> y
-        print "z in copy_local_data:", z
+        #print "z in copy_local_data:", z
         min = bound[1] * xdim + bound[0]
         max = bound[4] * xdim + bound[3]
 
