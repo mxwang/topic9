@@ -478,31 +478,32 @@ class Netcdf_Reader:
         #bound[1],[4] -> y
         #boudn[2],[5] -> z
         print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
-        
-        #broad cast to all other processes slice by slice along z
-        local_buffer = np.empty(shape = (0), dtype = np.int)
-        print "--------------"
-        for i in xrange(0, zdim):
-            
-            if(rank == 0):
-                
-                sliced_data = np.zeros(250000)
-                
-                #x + dimX * (y + dimY * z)
-                sidx_min = 0 + 500 * (0 + 500 * i)
-                sidx_max = 499 + 500 * (499 + 500 * i)
-                sliced_data = data_array[sidx_min:sidx_max]
-                
-            else:
-                sliced_data = None
 
-            #broadcasting.....
-            sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
+        # #--------------------------
+        # #broad cast to all other processes slice by slice along z
+        # local_buffer = np.empty(shape = (0), dtype = np.int)
+        
+        # for i in xrange(0, zdim):
+            
+        #     if(rank == 0):
+                
+        #         sliced_data = np.zeros(250000)
+                
+        #         #x + dimX * (y + dimY * z)
+        #         sidx_min = 0 + 500 * (0 + 500 * i)
+        #         sidx_max = 499 + 500 * (499 + 500 * i)
+        #         sliced_data = data_array[sidx_min:sidx_max]
+                
+        #     else:
+        #         sliced_data = None
+
+        #     #broadcasting.....
+        #     sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
                       
-            if(i >= bound[2] and i <= bound[5]):
-                local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
+        #     if(i >= bound[2] and i <= bound[5]):
+        #         local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
                         
-        print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  ">"
+        # print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  ">"
             
             
     def copy_local_data(self, z, bound, sliced_data, rank):
