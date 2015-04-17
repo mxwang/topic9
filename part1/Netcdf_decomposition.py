@@ -412,30 +412,17 @@ class Netcdf_Reader:
         rank = MPI.COMM_WORLD.Get_rank()
         #sys.stdout.write("Helloworld! I am process %d of %d\n" % (rank, size))
 
-        # xdim, ydim, zdim = unpack('3i', raw_data[0:12])
+        xdim, ydim, zdim = unpack('3i', raw_data[0:12])
             
 
-        # data_size = xdim * ydim * zdim                
-        # if (rank == 0):
+        data_size = xdim * ydim * zdim                
+        if (rank == 0):
                     
-        #     #x, y, z , x+dimX*(y+dimY*z)
-        #     data = unpack('25000000f', raw_data[12:16 * data_size])
-        #     data_array = np.asarray(data)
+            #x, y, z , x+dimX*(y+dimY*z)
+            data = unpack('25000000f', raw_data[12:16 * data_size])
+            data_array = np.asarray(data)
 
-        #     print "mean from data_array: ", np.mean(data_array), "data_array size:", data_array.size
-
-        #------testing-----------
-        xdim = 3
-        ydim = 3
-        zdim = 3
-
-        data_size = xdim * ydim * zdim
-
-        if(rank == 0):
-            data_array = np.arange(99)
-            print data_array, data_array.size
-
-        #------------------------
+            print "mean from data_array: ", np.mean(data_array), "data_array size:", data_array.size
 
             xsub = int(math.ceil(float(xdim)/xpart))
             ysub = int(math.ceil(float(ydim)/ypart))
