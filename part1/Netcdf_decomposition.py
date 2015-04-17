@@ -505,7 +505,7 @@ class Netcdf_Reader:
             
             if(rank == 0):
                 
-                sliced_data = np.zeros(250000)
+                sliced_data = np.zeros(xdim * ydim)
                 
                 #x + dimX * (y + dimY * z)
                 sidx_min = 0 + xdim * (0 + ydim * i)
