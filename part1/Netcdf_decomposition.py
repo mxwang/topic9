@@ -469,7 +469,7 @@ class Netcdf_Reader:
                     bound[ridx+1][2] = zmin + 1
                     bound[ridx+1][5] = zmax
 
-                print "rank", ridx, "boundary:", bound[ridx][:]
+                #print "rank", ridx, "boundary:", bound[ridx][:]
            
         else:
             bound = None
@@ -481,7 +481,8 @@ class Netcdf_Reader:
         #bound[0],[3] -> x
         #bound[1],[4] -> y
         #boudn[2],[5] -> z
-        print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
+        if(rank != 0):
+            print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
 
         # #--------------------------
         # #broad cast to all other processes slice by slice along z
