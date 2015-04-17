@@ -431,7 +431,7 @@ class Netcdf_Reader:
             bound = np.zeros((size, 6), dtype = np.int)
            
             
-            for ridx in xrange(0, size):
+            for ridx in xrange(1, size):
                 
                 zidx = (ridx) % zpart
                 yidx = ((ridx) / zpart) % ypart
@@ -471,7 +471,9 @@ class Netcdf_Reader:
            
         else:
             bound = None
-           
+            
+        for i in xrange(0, 6):
+            bound[0][i] = 0
         bound = MPI.COMM_WORLD.scatter(bound,root = 0)
         
         #bound[0],[3] -> x
