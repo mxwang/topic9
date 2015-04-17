@@ -513,10 +513,7 @@ class Netcdf_Reader:
          
         if(rank != 0):
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  np.mean(local_buffer), ">"
-            local_sum = np.sum(local_buffer)
-            local_size = local_buffer.size
-            local_mean = local_sum/local_size
-            print "local mean calculated", local_mean, "local sum", local_sum, "local size", local_size
+           
         #reduce node receives results with a collective "reduce"
         #MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
 
