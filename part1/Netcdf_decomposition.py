@@ -508,7 +508,7 @@ class Netcdf_Reader:
             if(i >= bound[2] and i <= bound[5]):
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
                         
-        print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  ">"
+        print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  np.mean(local_buffer), ">"
             
             
     def copy_local_data(self, z, bound, sliced_data, rank):
