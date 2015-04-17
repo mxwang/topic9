@@ -421,7 +421,7 @@ class Netcdf_Reader:
             #x, y, z , x+dimX*(y+dimY*z)
             data = unpack('25000000f', raw_data[12:16 * data_size])
             data_array = np.asarray(data)
-            data_array = data_array[:300]
+            #data_array = data_array[:300]
 
             print "sum of data_array:", np.sum(data_array), "mean", np.sum(data_array)/data_array.size
 
