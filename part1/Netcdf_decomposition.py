@@ -508,8 +508,8 @@ class Netcdf_Reader:
                 sliced_data = np.zeros(250000)
                 
                 #x + dimX * (y + dimY * z)
-                sidx_min = 0 + 500 * (0 + 500 * i)
-                sidx_max = 499 + 500 * (499 + 500 * i)
+                sidx_min = 0 + xdim * (0 + ydim * i)
+                sidx_max = (xdim-1) + xdim * ((ydim-1) + ydim * i)
                 sliced_data = data_array[sidx_min:sidx_max]
                 
             else:
@@ -519,7 +519,7 @@ class Netcdf_Reader:
             sliced_data = MPI.COMM_WORLD.bcast(sliced_data,root = 0)
                       
             if(i >= bound[2] and i <= bound[5] and i != 0):
-                local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
+                local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank,xdim))
         
         total = np.zeros(size)
         
@@ -547,12 +547,12 @@ class Netcdf_Reader:
             
 
             
-    def copy_local_data(self, z, bound, sliced_data, rank):
+    def copy_local_data(self, z, bound, sliced_data, rank,xdim):
         #x + dimX * y
         #bound[0],[3] -> x
         #bound[1],[4] -> y
-        min = bound[1] * 500 + bound[0]
-        max = bound[4] * 500 + bound[3]
+        min = bound[1] * xdim + bound[0]
+        max = bound[4] * xdim + bound[3]
 
         return sliced_data[min:max]
         
