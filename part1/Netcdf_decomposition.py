@@ -517,7 +517,7 @@ class Netcdf_Reader:
             mean_all = np.zeros(size)
             print "mean all before:", mean_all
         MPI.COMM_WORLD.Barrier()
-        if(rank != 0)
+        if(rank != 0):
             print "rank", rank, "mean val:", mean_val
             mean_all = MPI.COMM_WORLD.gather(mean_val,root = 0)
         if(rank == 0):
