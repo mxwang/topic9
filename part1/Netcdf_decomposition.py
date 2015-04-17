@@ -509,22 +509,22 @@ class Netcdf_Reader:
                 local_buffer = np.append(local_buffer, self.copy_local_data(i,bound,sliced_data,rank))
         #total = np.zeros(1)
         total = np.zeros(size)
-        integral = np.zeros(1)
+        #integral = np.zeros(1)
          
         if(rank != 0):
-            integral[0] = np.mean(local_buffer)
+            #integral[0] = np.mean(local_buffer)
             #integral = np.mean(local_buffer)
-            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  integral[0], ">"
+            print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  np.mean(local_buffer), ">"
 
         #reduce node receives results with a collective "reduce"
         #MPI.COMM_WORLD.Reduce(integral, total, op = MPI.SUM, root = 0)
 
         #gathering
-        total = MPI.COMM_WORLD.gather(integral, root = 0)
+        total[1:] = MPI.COMM_WORLD.gather(np.mean(local_buffer), root = 0)
         
         if rank == 0:
-            print "Process", rank, "receives local means <", total[:][0], "> and the overall mean = <", np.mean(total), ">", "total size", total.size
-            print "sum", np.sum(total), "mean / size -1", np.sum(total)/(total.size -1)
+            print "Process", rank, "receives local means <", total[:][0], "> and the overall mean = <", np.mean(total), ">", 
+            print "sum", np.sum(total), "mean / size -1", np.sum(total)/(size -1)
 
             
     def copy_local_data(self, z, bound, sliced_data, rank):
