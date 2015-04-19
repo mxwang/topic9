@@ -544,7 +544,7 @@ class Netcdf_Reader:
         local_data = []
         for i in xrange(0,local_buffer.size):
             if(i < 10):
-                print "i", i, "local_buffer.size": local_buffer.size
+                print "i", i, "local_buffer.size:", local_buffer.size
         
             
     def copy_local_data(self, z, bound, sliced_data, rank,xdim):
