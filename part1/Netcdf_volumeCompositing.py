@@ -485,8 +485,6 @@ class Netcdf_Reader:
         if(rank != 0):
             print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
             
-        if(rank == 0):
-            print "-------------------"
         #--------------------------
         #broad cast to all other processes slice by slice along z
         local_buffer = np.empty(shape = (0), dtype = np.int)
@@ -518,7 +516,7 @@ class Netcdf_Reader:
         
         total = np.zeros(size)
         
-         
+        MPI.COMM_WORLD.Barrier()
         if(rank != 0):
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  np.mean(local_buffer), ">"
            
