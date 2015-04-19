@@ -516,7 +516,7 @@ class Netcdf_Reader:
         
         total = np.zeros(size)
         
-        MPI.COMM_WORLD.Barrier()
+        
         if(rank != 0):
             print "Process <", rank , "> has data <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],">,  mean = <",  np.mean(local_buffer), ">"
            
@@ -540,7 +540,11 @@ class Netcdf_Reader:
         # transfer data from 1D->3D (local_buffer)
         # int zDirection = i % zLength;
         # int yDirection = (i / zLength) % yLength;
-        # int xDirection = i / (yLength * zLength); 
+        # int xDirection = i / (yLength * zLength);
+        local_data = []
+        for i in local_buffer.size:
+            if(i < 10):
+                print "i", i
         
             
     def copy_local_data(self, z, bound, sliced_data, rank,xdim):
