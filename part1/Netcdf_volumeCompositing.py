@@ -484,7 +484,9 @@ class Netcdf_Reader:
         #boudn[2],[5] -> z
         if(rank != 0):
             print "Subvolume <", bound[0], bound[3], "> <" ,bound[1], bound[4], "> <", bound[2], bound[5],"> is assigned to process <", str(rank), ">"
-
+            
+        if(rank == 0):
+            print "-------------------"
         #--------------------------
         #broad cast to all other processes slice by slice along z
         local_buffer = np.empty(shape = (0), dtype = np.int)
@@ -535,8 +537,13 @@ class Netcdf_Reader:
             mean = np.sum(total)/(size -1)
             #print "total size", len(total), "rank size", size
             print "Process", rank, "receives local means <", total[1:], "> and the overall mean = <", mean, ">", 
-            
 
+        # part2---volume compositing
+        # transfer data from 1D->3D (local_buffer)
+        # int zDirection = i % zLength;
+        # int yDirection = (i / zLength) % yLength;
+        # int xDirection = i / (yLength * zLength); 
+        
             
     def copy_local_data(self, z, bound, sliced_data, rank,xdim):
         #x + dimX * y
