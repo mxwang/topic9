@@ -531,10 +531,10 @@ class Netcdf_Reader:
             
         #root compute the mean value of the whole data 
         if rank == 0:
-            print "-----------------------"
             mean = np.sum(total)/(size -1)
             #print "total size", len(total), "rank size", size
-            print "Process", rank, "receives local means <", total[1:], "> and the overall mean = <", mean, ">", 
+            print "Process", rank, "receives local means <", total[1:], "> and the overall mean = <", mean, ">",
+            print "-----------------------"
 
         # part2---volume compositing
         # transfer data from 1D->3D (local_buffer)
@@ -542,9 +542,9 @@ class Netcdf_Reader:
         # int yDirection = (i / zLength) % yLength;
         # int xDirection = i / (yLength * zLength);
         local_data = []
-        for i in local_buffer.size:
+        for i in xrange(0,local_buffer.size):
             if(i < 10):
-                print "i", i
+                print "i", i, "local_buffer.size": local_buffer.size
         
             
     def copy_local_data(self, z, bound, sliced_data, rank,xdim):
