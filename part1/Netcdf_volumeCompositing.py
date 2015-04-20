@@ -238,6 +238,94 @@ class Netcdf_Reader:
             
         return var_comp
 
+    # topic 9, part 2: parallel volume compositing
+    #composite all 2d slices of 'var' between min and max along input 'dim'
+    #using back_to_front formular
+    def parallel_volume_composite(self, var, dic, bound, val, col_data):
+
+        # composite all slices along z axis
+        #bound[0],[3] -> x
+        #bound[1],[4] -> y
+        #boudn[2],[5] -> z
+        min_idx = bound[2]
+        max_idx = bound[5]
+        var_comp_len = max_idx - min_idx + 1
+        var_len = var_comp_len
+        #var_comp_len = max_idx - min_idx + 1
+        #var_len = len(var)
+
+        
+        # var_width = len(var[0]) 
+        # var_height = len(var[0][0]) 
+        var_width = bound[3] - bound[0] +1
+        var_height = bound[4] - bound[1] + 1
+        
+        #var_comp = np.empty([var_comp_len, var_width, var_height])
+        var_comp = np.empty([var_width, var_height, var_comp_len])
+        # i = 0
+        # for idx in xrange(min_idx, max_idx + 1):
+        #     var_comp[:][i] = var[:][idx]
+        #     i += 1
+        var_comp = np.reshape(local_data, (var_width, var_height, var_comp_len))
+        print "print var_comp:", var_comp[:]
+
+        #----------------------------------------  
+        # val_max = np.nanmax(var_comp)
+        # val_min = np.nanmin(var_comp)
+
+        # colorConverter = cols.ColorConverter()
+                    
+        # for i in xrange(0, var_width):
+        #     for j in xrange(0, var_height):
+        #         c = np.zeros(3)
+
+
+        #         if(dic < 0):                #along negative direction
+        #             for idx in xrange(0, var_comp_len):
+        #                 xalpha = self.get_alpha_x(var_comp[idx][i][j], val_min, val_max, val) 
+        #                 xnor = self.get_color_x(var_comp[idx][i][j], val_min, val_max)
+
+        #                 xcolor = colorConverter.to_rgb(str(xnor))
+        #                 c[0] = c[0] * (1 - xalpha) + xcolor[0] * xalpha
+        #                 c[1] = c[1] * (1 - xalpha) + xcolor[1] * xalpha
+        #                 c[2] = c[2] * (1 - xalpha) + xcolor[2] * xalpha
+        #         else:                         #along positive direction
+        #             alpha = 0                           #front-to-back
+        #             for idx in xrange(0, var_comp_len):
+        #                 xalpha = self.get_alpha_x(var_comp[idx][i][j], val_min, val_max, val) 
+        #                 #float, gray 0-1
+        #                 xnor = self.get_color_x(var_comp[idx][i][j], val_min, val_max)
+
+        #                 xcolor = colorConverter.to_rgb(repr(xnor))
+        #                 #xcolor = colorConverter.to_rgb(repr(var_comp[idx][i][j]))
+        #                 # c[0] = c[0] * (1 - xalpha) + xcolor[0] * xalpha
+        #                 # c[1] = c[1] * (1 - xalpha) + xcolor[1] * xalpha
+        #                 # c[2] = c[2] * (1 - xalpha) + xcolor[2] * xalpha
+
+
+        #                 c[0] = c[0] + xcolor[0] * xalpha * ( 1- alpha)
+        #                 c[1] = c[1] + xcolor[1] * xalpha * ( 1- alpha)
+        #                 c[2] = c[2] + xcolor[2] * xalpha * ( 1- alpha)
+        #                 alpha = alpha + xalpha * ( 1 - alpha)
+        #                 if(alpha >=0.9):
+        #                     break
+
+
+        #         col_data.append(c[0])
+        #         col_data.append(c[1])
+        #         col_data.append(c[2])
+
+        #     #find the min and max value for transfer function
+           
+            
+        #     #set matplotlib color map
+        #     # jet = cm = plt.get_cmap('jet') 
+        #     # cNorm  = colors.Normalize(vmin = val_min, vmax = val_max, clip=True)
+        #     # scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
+            
+        return var_comp
+
+
     def get_alpha_x(self, var_val, min, max, opa):
         if(np.isnan(var_val)):
             return 1
@@ -537,14 +625,15 @@ class Netcdf_Reader:
             print "-----------------------"
 
         # part2---volume compositing
-        # transfer data from 1D->3D (local_buffer)
+
         # int zDirection = i % zLength;
         # int yDirection = (i / zLength) % yLength;
         # int xDirection = i / (yLength * zLength);
-        local_data = []
-        for i in xrange(0,local_buffer.size):
-            if(i < 10):
-                print "i", i, "local_buffer.size:", local_buffer.size
+        # along bound[2], bound[5]->z, 1->positive direction, 0.5->opactity
+        print "part 2-------------"
+        col_data = []
+        self.parallel_volume_composite(local_data, 1, bound, 0.5, col_data )
+        
         
             
     def copy_local_data(self, z, bound, sliced_data, rank,xdim):
@@ -600,18 +689,9 @@ def main(argv):
     ypart = (int)(sys.argv[3])
     zpart = (int)(sys.argv[4])
 
-    # #decoding binary data from file
-    # xdim, ydim, zdim = unpack('3i', raw_data[0:12])
-    # #print xdim, ydim, zdim
-
-    # data_size = xdim * ydim * zdim
-    # #x, y, z , x+dimX*(y+dimY*z)
-    # data = unpack('25000000f', raw_data[12:16 * data_size])
-    # data_array = np.asarray(data)
-
-    #print "mean: ", np.mean(data_array)
-
     reader.decompose(xpart, ypart, zpart, raw_data)
+    
+    
     
     
        
