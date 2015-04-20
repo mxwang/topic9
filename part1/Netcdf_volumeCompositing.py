@@ -632,7 +632,7 @@ class Netcdf_Reader:
         # along bound[2], bound[5]->z, 1->positive direction, 0.5->opactity
         print "part 2-------------"
         col_data = []
-        self.parallel_volume_composite(local_data, 1, bound, 0.5, col_data )
+        self.parallel_volume_composite(local_buffer, 1, bound, 0.5, col_data )
         
         
             
