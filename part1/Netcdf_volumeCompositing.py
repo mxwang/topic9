@@ -266,7 +266,7 @@ class Netcdf_Reader:
         # for idx in xrange(min_idx, max_idx + 1):
         #     var_comp[:][i] = var[:][idx]
         #     i += 1
-        var_comp = np.reshape(local_data, (var_width, var_height, var_comp_len))
+        var_comp = np.reshape(var, (var_width, var_height, var_comp_len))
         print "print var_comp:", var_comp[:]
 
         #----------------------------------------  
